@@ -4,7 +4,7 @@ import os
 import urllib.error
 import urllib.request
 
-from openai_utils import create_response, parse_json_object, require_env
+from openai_utils import create_response_with_usage, parse_json_object, print_usage, require_env
 
 
 NOTION_API_BASE = "https://api.notion.com/v1"
@@ -155,7 +155,8 @@ JSON 스키마:
 def main():
     database_id = require_env("NOTION_DATABASE_ID")
     today = os.environ.get("DRILL_DATE") or dt.date.today().isoformat()
-    text = create_response(build_prompt(today), max_output_tokens=14000)
+    text, usage = create_response_with_usage(build_prompt(today), max_output_tokens=14000)
+    print_usage("SQL tuning drill generation", usage)
     payload = parse_json_object(text)
 
     problems = payload.get("problems", [])

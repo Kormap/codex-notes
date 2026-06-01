@@ -5,7 +5,7 @@ import pathlib
 import urllib.error
 import urllib.request
 
-from openai_utils import create_response, require_env
+from openai_utils import create_response_with_usage, print_usage, require_env
 
 
 REVIEW_TARGETS = [
@@ -95,7 +95,8 @@ def main():
     today = os.environ.get("REVIEW_DATE") or dt.date.today().isoformat()
     root = pathlib.Path.cwd()
     content = read_targets(root)
-    report = create_response(build_prompt(today, content), max_output_tokens=10000)
+    report, usage = create_response_with_usage(build_prompt(today, content), max_output_tokens=10000)
+    print_usage("codex-notes weekly review", usage)
 
     title = f"[Weekly Review] codex-notes 점검 - {today}"
     issue = github_request(

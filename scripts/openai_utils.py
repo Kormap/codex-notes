@@ -27,6 +27,15 @@ def post_json(url, payload, headers):
 
 
 def create_response(prompt, *, model=None, max_output_tokens=12000):
+    text, _usage = create_response_with_usage(
+        prompt,
+        model=model,
+        max_output_tokens=max_output_tokens,
+    )
+    return text
+
+
+def create_response_with_usage(prompt, *, model=None, max_output_tokens=12000):
     api_key = require_env("OPENAI_API_KEY")
     selected_model = model or os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
 
@@ -44,7 +53,17 @@ def create_response(prompt, *, model=None, max_output_tokens=12000):
             "Content-Type": "application/json",
         },
     )
-    return extract_output_text(response)
+    return extract_output_text(response), response.get("usage", {})
+
+
+def print_usage(label, usage):
+    input_tokens = usage.get("input_tokens", 0)
+    output_tokens = usage.get("output_tokens", 0)
+    total_tokens = usage.get("total_tokens", input_tokens + output_tokens)
+    print(f"{label} token usage:")
+    print(f"- input_tokens: {input_tokens}")
+    print(f"- output_tokens: {output_tokens}")
+    print(f"- total_tokens: {total_tokens}")
 
 
 def extract_output_text(response):
