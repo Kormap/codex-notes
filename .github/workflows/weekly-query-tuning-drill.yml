@@ -1,8 +1,6 @@
 name: Weekly Query Tuning Drill
 
 on:
-  schedule:
-    - cron: "0 0 * * 5" # Friday 09:00 KST
   workflow_dispatch:
 
 jobs:

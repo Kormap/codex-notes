@@ -1,8 +1,6 @@
 name: Weekly Codex Notes Review
 
 on:
-  schedule:
-    - cron: "0 0 * * 1" # Monday 09:00 KST
   workflow_dispatch:
 
 permissions:
