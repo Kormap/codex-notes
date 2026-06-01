@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Generator"
+  short_description: "JUnit, Mockito, 통합 테스트를 생성하고 보강합니다."
+  default_prompt: "이 코드에 필요한 테스트를 생성해줘."

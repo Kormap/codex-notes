@@ -1,0 +1,4 @@
+interface:
+  display_name: "JPA Performance Review"
+  short_description: "JPA N+1, fetch 전략, 영속성 컨텍스트 비용을 점검합니다."
+  default_prompt: "JPA 코드의 성능 리스크를 점검해줘."

@@ -68,26 +68,33 @@
 .
 ├── AGENTS.md                # Dev OS for Codex 본체
 ├── README.md                # 저장소 설명
-├── standards/               # 사고 기준 정의
-│   ├── infra.md
-│   ├── db.md
-│   ├── application.md
-│   └── performance.md
-├── templates/               # 코드 생성 템플릿
-│   ├── sql/
-│   ├── mybatis/
-│   ├── test/
-│   └── api-doc/
-├── prompts/                 # 상황별 프롬프트
-│   ├── refactor.md
-│   ├── performance.md
-│   ├── query-review.md
-│   └── infra-review.md
-└── ci/
-    └── prompt-lint.yml
+└── skills/                  # Codex 개인 Skill
+    ├── pr-review/
+    ├── spring-transaction-audit/
+    ├── query-plan-review/
+    ├── jpa-performance-review/
+    ├── mybatis-xml-review/
+    ├── test-generator/
+    ├── logging-observability/
+    └── deploy-checklist/
 ```
 
-현재는 `AGENTS.md`와 `README.md`를 중심으로 시작하고, 필요할 때 기준 문서와 템플릿을 추가한다.
+필요하면 이후 `standards/`, `templates/`, `prompts/`, `ci/`를 추가한다.
+
+---
+
+## Skills
+
+| Skill | 용도 |
+|---|---|
+| `pr-review` | PR 변경점의 버그, 성능, 테스트 누락, 운영 리스크 리뷰 |
+| `spring-transaction-audit` | Spring 트랜잭션, 락, 커넥션 점유, 동시성 점검 |
+| `query-plan-review` | SQL 실행계획, 인덱스, 조인, 페이징 병목 분석 |
+| `jpa-performance-review` | JPA N+1, fetch 전략, 영속성 컨텍스트 비용 점검 |
+| `mybatis-xml-review` | MyBatis XML 동적 SQL, resultMap, count/paging 리뷰 |
+| `test-generator` | JUnit, Mockito, Spring 통합 테스트 생성/보강 |
+| `logging-observability` | 로그 레벨, traceId/MDC, 메트릭, 장애 추적성 개선 |
+| `deploy-checklist` | 배포 전 migration, rollback, config, health check 점검 |
 
 ---
 
@@ -106,6 +113,16 @@ ln -s "$(pwd)/AGENTS.md" ./AGENTS.md
 ```
 
 프로젝트별 규칙이 필요하면 해당 프로젝트의 `AGENTS.md`에서 이 문서를 기반으로 필요한 내용만 오버라이드한다.
+
+### Skill 자동 발견
+
+Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 경로 아래에 Skill 디렉터리가 있어야 한다.
+
+```bash
+ln -s "$(pwd)/skills/pr-review" "$HOME/.codex/skills/pr-review"
+```
+
+이 저장소의 Skill은 Codex Skill 디렉터리에 연결해서 사용한다.
 
 ---
 
