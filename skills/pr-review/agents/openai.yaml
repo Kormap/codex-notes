@@ -1,4 +1,4 @@
 interface:
-  display_name: "PR Review"
+  display_name: "PR 리뷰"
   short_description: "PR 변경점의 버그, 성능, 테스트 누락을 리뷰합니다."
   default_prompt: "PR 변경사항을 운영 관점으로 리뷰해줘."

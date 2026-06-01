@@ -1,29 +1,29 @@
 ---
 name: test-generator
-description: Generate or improve tests for Java, Spring Boot, REST APIs, repositories, services, and legacy code. Use when Codex is asked to add JUnit, Mockito, Spring MVC, integration, repository, regression, boundary, concurrency, or failure-path tests for changed code or missing coverage.
+description: Generate or improve tests for Java, Spring Boot, REST API, repository, service, and legacy code. JUnit, Mockito, Spring MVC, integration test, repository test, regression, boundary, concurrency, failure-path 테스트를 추가하거나 보강할 때 사용한다.
 ---
 
-# Test Generator
+# 테스트 생성
 
-## Workflow
+## 작업 흐름
 
-1. Detect the test stack from the project: JUnit version, Mockito, AssertJ, Spring Boot Test, MockMvc, Testcontainers.
-2. Read existing tests to match naming, fixtures, assertions, and package structure.
-3. Identify behavior contracts and failure modes before writing tests.
-4. Add the smallest useful tests first.
-5. Run the narrowest test command available.
+1. 프로젝트의 테스트 스택을 확인한다: JUnit 버전, Mockito, AssertJ, Spring Boot Test, MockMvc, Testcontainers.
+2. 기존 테스트를 읽고 naming, fixture, assertion, package 구조를 맞춘다.
+3. 테스트 작성 전 behavior contract와 failure mode를 먼저 정의한다.
+4. 가장 작은 단위의 유용한 테스트부터 추가한다.
+5. 가능한 가장 좁은 테스트 명령을 실행한다.
 
-## Test Selection
+## 테스트 선택 기준
 
-- Service logic: unit tests with mocked ports/repositories unless persistence behavior matters.
-- Controller/API: MockMvc/WebTestClient tests for status, validation, response body, and error format.
-- Repository/query: slice or integration tests when SQL/JPA/MyBatis behavior is the risk.
-- Transactions/concurrency: integration-style tests when rollback, locking, or race conditions matter.
-- Regression: reproduce the bug first, then verify the fix.
+- Service logic: persistence 동작이 핵심이 아니면 mocked port/repository 기반 unit test.
+- Controller/API: status, validation, response body, error format은 MockMvc/WebTestClient.
+- Repository/query: SQL/JPA/MyBatis 동작이 리스크이면 slice 또는 integration test.
+- Transaction/concurrency: rollback, locking, race condition이 중요하면 integration-style test.
+- Regression: 먼저 버그를 재현하고, 그다음 수정 검증을 추가한다.
 
-## Output
+## 출력
 
-- Include concrete test files, not placeholder test names.
-- Avoid testing implementation details that make refactoring expensive.
-- Include edge cases: null/empty, duplicate requests, authorization, invalid state, boundary dates.
-- Report the exact test command and result.
+- placeholder가 아닌 실제 테스트 파일을 작성한다.
+- 리팩터링 비용을 키우는 내부 구현 상세 검증은 피한다.
+- null/empty, 중복 요청, 권한, invalid state, 경계 날짜를 포함한다.
+- 실행한 테스트 명령과 결과를 보고한다.

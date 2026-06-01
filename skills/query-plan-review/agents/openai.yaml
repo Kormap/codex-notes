@@ -1,4 +1,4 @@
 interface:
-  display_name: "Query Plan Review"
+  display_name: "실행계획 리뷰"
   short_description: "SQL 실행계획과 인덱스 병목을 상세 분석합니다."
   default_prompt: "이 SQL과 실행계획을 기준으로 튜닝 포인트를 찾아줘."

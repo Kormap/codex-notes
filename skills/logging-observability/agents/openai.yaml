@@ -1,4 +1,4 @@
 interface:
-  display_name: "Logging Observability"
+  display_name: "로깅 관측성"
   short_description: "로그 레벨, traceId, MDC, 장애 추적성을 점검합니다."
   default_prompt: "이 코드의 로깅과 관측 가능성을 점검해줘."

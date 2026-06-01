@@ -1,4 +1,4 @@
 interface:
-  display_name: "Spring Transaction Audit"
+  display_name: "Spring 트랜잭션 점검"
   short_description: "Spring 트랜잭션, 락, 커넥션 점유를 점검합니다."
   default_prompt: "Spring 서비스의 트랜잭션과 동시성 리스크를 점검해줘."

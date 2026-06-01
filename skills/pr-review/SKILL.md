@@ -1,32 +1,32 @@
 ---
 name: pr-review
-description: Review pull requests and code diffs with a backend operations lens. Use when Codex is asked to review a GitHub PR, local git diff, branch comparison, or changed files for bugs, regressions, missing tests, transaction/concurrency risks, DB performance issues, deployment risk, or production-readiness.
+description: Review pull requests and code diffs with a backend operations lens. GitHub PR, git diff, 변경 파일 리뷰, 버그, 회귀, 테스트 누락, transaction/concurrency, DB 성능, 배포 리스크, 운영 준비 상태를 점검할 때 사용한다.
 ---
 
-# PR Review
+# PR 리뷰
 
-## Workflow
+## 작업 흐름
 
-1. Identify the review target: PR number, branch diff, staged diff, or changed files.
-2. Read the changed files and the surrounding code that defines contracts, transactions, queries, and tests.
-3. Prioritize findings by production impact, not style preference.
-4. Check whether the change is covered by focused tests.
-5. Report findings first. Keep summary secondary.
+1. 리뷰 대상을 확인한다: PR 번호, 브랜치 diff, staged diff, 변경 파일.
+2. 변경 파일과 주변 계약 코드, 트랜잭션, 쿼리, 테스트를 함께 읽는다.
+3. 스타일보다 운영 영향이 큰 문제를 우선순위로 둔다.
+4. 변경 내용이 집중 테스트로 검증되는지 확인한다.
+5. 최종 답변은 발견 사항을 먼저 쓰고, 요약은 뒤에 둔다.
 
-## Review Priorities
+## 리뷰 우선순위
 
-- Runtime bugs: null handling, wrong branch conditions, broken API contracts, serialization issues.
-- Data correctness: lost updates, duplicate writes, stale reads, partial updates, missing idempotency.
-- Transactions: overly wide `@Transactional`, external calls inside transactions, rollback mismatch.
-- Concurrency: race conditions, lock ordering, deadlock risk, non-atomic read-modify-write.
-- DB cost: N+1, unindexed filters, excessive count queries, OFFSET paging on large tables.
-- Operations: logging gaps, missing metrics, rollback difficulty, risky migrations or config changes.
-- Tests: missing failure cases, boundary cases, concurrency/data integrity cases.
+- 런타임 버그: null 처리, 잘못된 분기, 깨진 API 계약, 직렬화 문제.
+- 데이터 정합성: lost update, 중복 쓰기, stale read, 부분 업데이트, 멱등성 누락.
+- 트랜잭션: 과도한 `@Transactional`, 트랜잭션 내부 외부 호출, 롤백 조건 불일치.
+- 동시성: race condition, 락 순서, 데드락, 비원자적 read-modify-write.
+- DB 비용: N+1, 인덱스 없는 필터, 과도한 count, 대용량 OFFSET 페이징.
+- 운영성: 로그 부족, 메트릭 누락, 롤백 어려움, 위험한 migration/config 변경.
+- 테스트: 실패 케이스, 경계값, 동시성/정합성 테스트 누락.
 
-## Output
+## 출력
 
-- Start with findings ordered by severity.
-- Include file and line references when available.
-- For each finding, include impact and a concrete fix direction.
-- If no issues are found, say so clearly and mention residual test or runtime risk.
-- Avoid broad refactors unless directly required by the diff.
+- 심각도 순서로 발견 사항을 먼저 작성한다.
+- 가능하면 파일과 라인 번호를 포함한다.
+- 각 항목에는 영향도와 구체적인 수정 방향을 함께 쓴다.
+- 문제가 없으면 명확히 말하고 남은 테스트/런타임 리스크를 언급한다.
+- diff와 직접 관련 없는 대규모 리팩터링 제안은 피한다.

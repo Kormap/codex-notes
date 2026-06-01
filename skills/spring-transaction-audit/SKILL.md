@@ -1,31 +1,31 @@
 ---
 name: spring-transaction-audit
-description: Audit Spring service code for transaction boundaries, propagation, rollback behavior, locking, connection usage, and concurrency risks. Use when Codex reviews Java/Spring service logic, `@Transactional` methods, repository calls, external API calls, distributed locks, or production incidents related to data consistency.
+description: Audit Spring service code for transaction boundaries, propagation, rollback, locking, connection usage, and concurrency risks. Java/Spring 서비스, `@Transactional`, repository 호출, 외부 API 호출, 분산락, 데이터 정합성 장애를 점검할 때 사용한다.
 ---
 
-# Spring Transaction Audit
+# Spring 트랜잭션 점검
 
-## Workflow
+## 작업 흐름
 
-1. Map the request path: Controller -> Service -> Repository -> external systems.
-2. Mark the exact transaction boundary and every DB/external call inside it.
-3. Identify shared mutable state and concurrent request paths.
-4. Check rollback behavior for checked exceptions, runtime exceptions, async work, and events.
-5. Suggest the smallest change that makes the flow operationally safe.
+1. 요청 흐름을 그린다: Controller -> Service -> Repository -> 외부 시스템.
+2. 정확한 트랜잭션 경계와 그 안의 DB/외부 호출을 표시한다.
+3. 공유 mutable state와 동시 요청 경로를 찾는다.
+4. checked exception, runtime exception, async 작업, event의 롤백 동작을 확인한다.
+5. 운영상 안전해지는 가장 작은 변경을 제안한다.
 
-## Checklist
+## 체크리스트
 
-- Keep external API calls, file I/O, messaging, and long CPU work outside DB transactions.
-- Avoid holding DB connections while waiting on network calls.
-- Use optimistic or pessimistic locking only where concurrent writes can violate invariants.
-- Keep lock acquisition order consistent across code paths.
-- Prefer explicit repository methods for lock queries, e.g. `findByIdForUpdate`.
-- Watch for self-invocation that bypasses Spring transaction proxies.
-- Check `readOnly = true` for read paths and transaction absence for simple cacheable reads.
-- Ensure events published inside transactions are safe after rollback; prefer after-commit hooks when needed.
+- 외부 API, 파일 I/O, 메시징, 긴 CPU 작업은 DB 트랜잭션 밖으로 분리한다.
+- 네트워크 대기 중 DB 커넥션을 점유하지 않게 한다.
+- 동시 쓰기가 invariant를 깨는 경우에만 optimistic/pessimistic lock을 사용한다.
+- 여러 코드 경로의 락 획득 순서를 일관되게 유지한다.
+- 락 쿼리는 `findByIdForUpdate`처럼 명시적 repository 메서드를 선호한다.
+- 같은 클래스 내부 호출로 Spring transaction proxy를 우회하지 않는지 확인한다.
+- 조회 경로는 `readOnly = true` 또는 트랜잭션 생략 가능성을 확인한다.
+- 트랜잭션 내부 event 발행은 롤백 후 부작용을 확인하고, 필요하면 after-commit hook을 사용한다.
 
-## Output
+## 출력
 
-- Use sections: `[트랜잭션]`, `[동시성]`, `[락]`, `[개선안]`, `[검증]`.
-- Include code changes when the fix is clear.
-- Mention 10x traffic impact when connection pool, locks, or DB contention can amplify.
+- `[트랜잭션]`, `[동시성]`, `[락]`, `[개선안]`, `[검증]` 섹션을 사용한다.
+- 수정 방향이 명확하면 코드 변경 예시를 포함한다.
+- 커넥션 풀, 락, DB 경합이 커질 수 있으면 트래픽 10배 상황의 영향을 언급한다.

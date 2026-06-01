@@ -1,29 +1,29 @@
 ---
 name: logging-observability
-description: Review and improve application logging, tracing, MDC, correlation IDs, metrics, alerts, and incident diagnosability. Use when Codex is asked to inspect logs, add logging, design observability for Java/Spring APIs, improve error visibility, or make production failures easier to trace.
+description: Review and improve application logging, tracing, MDC, correlation IDs, metrics, alerts, and incident diagnosability. Java/Spring API 로그, traceId, MDC, 메트릭, 알림, 장애 추적성을 개선할 때 사용한다.
 ---
 
-# Logging Observability
+# 로깅과 관측 가능성
 
-## Workflow
+## 작업 흐름
 
-1. Identify the failure or operation that must be diagnosable.
-2. Trace request boundaries, async boundaries, batch boundaries, and external calls.
-3. Check whether logs contain enough context without exposing secrets or PII.
-4. Add structured logs and metrics at decision points, not every line.
-5. Verify log level and volume under high traffic.
+1. 반드시 진단 가능해야 하는 실패/업무 흐름을 식별한다.
+2. request boundary, async boundary, batch boundary, 외부 호출을 추적한다.
+3. 로그가 secret/PII를 노출하지 않으면서 충분한 context를 담는지 확인한다.
+4. 모든 줄이 아니라 의사결정 지점에 structured log와 metric을 추가한다.
+5. 고트래픽 상황의 log level과 log volume을 확인한다.
 
-## Checklist
+## 체크리스트
 
-- Include request ID, user/account key when safe, domain ID, external system name, latency, and result.
-- Use MDC/traceId propagation across async executors when applicable.
-- Log expected validation failures at debug/info or not at all depending on API policy.
-- Log unexpected system failures at error with exception stack.
-- Avoid logging secrets, tokens, passwords, full payloads, resident identifiers, or large blobs.
-- Add counters/timers for external calls, retries, queue lag, batch progress, and DB-heavy operations.
+- request ID, 안전한 user/account key, domain ID, external system name, latency, result를 포함한다.
+- async executor 경계에서는 필요하면 MDC/traceId propagation을 구성한다.
+- 예상 가능한 validation 실패는 API 정책에 따라 debug/info 또는 무로그로 둔다.
+- 예상치 못한 시스템 실패는 exception stack과 함께 error로 남긴다.
+- secret, token, password, full payload, 주민식별정보, 큰 blob은 로그에 남기지 않는다.
+- 외부 호출, retry, queue lag, batch progress, DB-heavy operation에는 counter/timer를 추가한다.
 
-## Output
+## 출력
 
-- Use sections: `[추적성]`, `[로그 레벨]`, `[민감정보]`, `[메트릭]`, `[개선안]`.
-- Include code snippets for MDC filters/interceptors or logging changes when clear.
-- Mention log volume risk at TPS 200+.
+- `[추적성]`, `[로그 레벨]`, `[민감정보]`, `[메트릭]`, `[개선안]` 섹션을 사용한다.
+- MDC filter/interceptor 또는 logging 변경이 명확하면 code snippet을 포함한다.
+- TPS 200+ 기준 log volume 리스크를 언급한다.

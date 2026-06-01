@@ -1,4 +1,4 @@
 interface:
-  display_name: "MyBatis XML Review"
+  display_name: "MyBatis XML 리뷰"
   short_description: "MyBatis XML 동적 SQL, resultMap, 페이징을 리뷰합니다."
   default_prompt: "MyBatis XML 쿼리를 운영 관점으로 리뷰해줘."
