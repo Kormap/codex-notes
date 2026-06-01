@@ -126,6 +126,42 @@ ln -s "$(pwd)/skills/pr-review" "$HOME/.codex/skills/pr-review"
 
 ---
 
+## GitHub Actions 자동화
+
+PC 전원 상태와 무관하게 실행해야 하는 반복 작업은 GitHub Actions cron으로 운영한다.
+
+| Workflow | 주기 | 결과 |
+|---|---|---|
+| `Weekly Query Tuning Drill` | 매주 금요일 09:00 KST | Notion `SQL 튜닝 최적화` DB에 문제 5개 생성 |
+| `Weekly Codex Notes Review` | 매주 월요일 09:00 KST | `Kormap/codex-notes` GitHub Issue에 점검 리포트 생성 |
+
+### Required Secrets
+
+GitHub repository settings에서 아래 값을 등록한다.
+
+```text
+OPENAI_API_KEY
+NOTION_TOKEN
+```
+
+Notion Integration은 `My Space > STUDY > SQL 튜닝 최적화` 데이터베이스에 접근 권한이 있어야 한다.
+
+### Optional Variables
+
+모델이나 Notion DB를 바꾸고 싶으면 repository variables에 아래 값을 둔다.
+
+```text
+OPENAI_MODEL=gpt-4.1-mini
+NOTION_DATABASE_ID=564cf1afe5c6408a8265b7a11548089e
+```
+
+### Local Codex Automations
+
+GitHub Actions로 이전한 작업은 로컬 Codex 자동화를 보조/수동 실행 용도로만 둔다.
+중복 실행을 피하려면 같은 주기의 로컬 자동화는 `PAUSED` 상태로 유지한다.
+
+---
+
 ## 향후 발전 방향
 
 - [ ] Agent별 standards 문서 분리

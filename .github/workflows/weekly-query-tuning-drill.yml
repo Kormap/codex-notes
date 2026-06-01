@@ -1,0 +1,25 @@
+name: Weekly Query Tuning Drill
+
+on:
+  schedule:
+    - cron: "0 0 * * 5" # Friday 09:00 KST
+  workflow_dispatch:
+
+jobs:
+  create-notion-drill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create SQL tuning drill pages in Notion
+        run: python scripts/create_notion_query_drill.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID || '564cf1afe5c6408a8265b7a11548089e' }}
