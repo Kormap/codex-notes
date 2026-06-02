@@ -1,10 +1,12 @@
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
+RETRYABLE_HTTP_CODES = {408, 409, 429, 500, 502, 503, 504}
 
 
 def require_env(name):
@@ -14,16 +16,57 @@ def require_env(name):
     return value
 
 
+def read_error_body(error):
+    body = error.read().decode("utf-8", errors="replace")
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        return body, {}
+    return body, parsed.get("error", {})
+
+
+def is_insufficient_quota(error_payload):
+    return error_payload.get("code") == "insufficient_quota" or error_payload.get("type") == "insufficient_quota"
+
+
+def retry_delay(error, attempt):
+    retry_after = error.headers.get("Retry-After")
+    if retry_after:
+        try:
+            return min(float(retry_after), 30.0)
+        except ValueError:
+            pass
+    return min(2**attempt, 30)
+
+
 def post_json(url, payload, headers):
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(url, data=data, headers=headers, method="POST")
+    max_retries = int(os.environ.get("OPENAI_MAX_RETRIES", "3"))
 
-    try:
-        with urllib.request.urlopen(request, timeout=60) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as error:
-        body = error.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"HTTP {error.code} from {url}: {body}") from error
+    for attempt in range(max_retries + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            body, error_payload = read_error_body(error)
+            if is_insufficient_quota(error_payload):
+                message = error_payload.get("message") or body
+                raise RuntimeError(
+                    "OpenAI API quota is exhausted for OPENAI_API_KEY. "
+                    "Check the API key, project billing, and usage limits. "
+                    f"API message: {message}"
+                ) from error
+
+            should_retry = error.code in RETRYABLE_HTTP_CODES and attempt < max_retries
+            if not should_retry:
+                raise RuntimeError(f"HTTP {error.code} from {url}: {body}") from error
+
+            delay = retry_delay(error, attempt)
+            print(f"OpenAI API HTTP {error.code}; retrying in {delay:.1f}s ({attempt + 1}/{max_retries})")
+            time.sleep(delay)
+
+    raise RuntimeError("OpenAI API request failed after retries")
 
 
 def create_response(prompt, *, model=None, max_output_tokens=12000):

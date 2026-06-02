@@ -67,7 +67,7 @@ codex-notes 저장소를 주간 점검하고 GitHub Issue 본문으로 사용할
 - AGENTS.md가 Codex 작업 루프와 Java/Spring 백엔드 운영 관점에 맞는가.
 - Skill description이 자동 트리거에 충분한 영어/한국어 키워드를 갖는가.
 - Skill 본문이 한국어 사용자에게 읽기 쉽고, 너무 장황하지 않은가.
-- README의 사용법, 자동화, Notion/GitHub Actions 안내가 현재 구조와 맞는가.
+- README의 사용법, 로컬 자동화, Notion/GitHub 보조 스크립트 안내가 현재 구조와 맞는가.
 - TODO, 오래된 지침, 중복, 불명확한 운영 리스크가 있는가.
 - 자동 수정하지 말고 개선 제안만 한다.
 
