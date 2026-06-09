@@ -102,14 +102,18 @@
 
 ### 글로벌 설정
 
+`codex-notes` 저장소 루트에서 실행한다.
+
 ```bash
 cp AGENTS.md ~/AGENTS.md
 ```
 
 ### 프로젝트별 적용
 
+적용할 프로젝트 디렉터리에서 실행한다.
+
 ```bash
-ln -s "$(pwd)/AGENTS.md" ./AGENTS.md
+ln -s /path/to/codex-notes/AGENTS.md ./AGENTS.md
 ```
 
 프로젝트별 규칙이 필요하면 해당 프로젝트의 `AGENTS.md`에서 이 문서를 기반으로 필요한 내용만 오버라이드한다.
@@ -119,14 +123,14 @@ ln -s "$(pwd)/AGENTS.md" ./AGENTS.md
 Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 경로 아래에 Skill 디렉터리가 있어야 한다.
 
 ```bash
-ln -s "$(pwd)/skills/pr-review" "$HOME/.codex/skills/pr-review"
+ln -s /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
 ```
 
 여러 Skill을 한 번에 연결하려면 아래처럼 반복해서 연결한다.
 
 ```bash
 mkdir -p "$HOME/.codex/skills"
-for dir in "$(pwd)"/skills/*; do
+for dir in /path/to/codex-notes/skills/*; do
   name=$(basename "$dir")
   ln -s "$dir" "$HOME/.codex/skills/$name"
 done
