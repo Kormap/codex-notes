@@ -1,6 +1,6 @@
 ---
 name: jpa-performance-review
-description: Review Spring Data JPA and Hibernate code for N+1, fetch strategy, EntityGraph, fetch join paging, dirty checking, persistence context, bulk updates, OSIV, and transaction boundaries. JPA entity, repository, JPQL, QueryDSL, ORM 성능 질문에 사용한다.
+description: JPA Entity, Repository, JPQL, QueryDSL에서 N+1, fetch 전략, 영속성 컨텍스트 비용, bulk update, OSIV 같은 ORM 성능 이슈를 점검할 때 사용한다.
 ---
 
 # JPA 성능 리뷰

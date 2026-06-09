@@ -1,6 +1,6 @@
 ---
 name: test-generator
-description: Generate or improve tests for Java, Spring Boot, REST API, repository, service, and legacy code. JUnit, Mockito, Spring MVC, integration test, repository test, regression, boundary, concurrency, failure-path 테스트를 추가하거나 보강할 때 사용한다.
+description: JUnit, Mockito, Spring MVC, 통합 테스트로 회귀, 경계값, 동시성, 실패 경로 테스트를 추가하거나 보강할 때 사용한다.
 ---
 
 # 테스트 생성

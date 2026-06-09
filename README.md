@@ -122,7 +122,18 @@ Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 
 ln -s "$(pwd)/skills/pr-review" "$HOME/.codex/skills/pr-review"
 ```
 
-이 저장소의 Skill은 Codex Skill 디렉터리에 연결해서 사용한다.
+여러 Skill을 한 번에 연결하려면 아래처럼 반복해서 연결한다.
+
+```bash
+mkdir -p "$HOME/.codex/skills"
+for dir in "$(pwd)"/skills/*; do
+  name=$(basename "$dir")
+  ln -s "$dir" "$HOME/.codex/skills/$name"
+done
+```
+
+이미 같은 이름의 링크나 디렉터리가 있으면 먼저 상태를 확인한 뒤 교체한다.
+Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 Skill 목록을 다시 읽는 세션에서 확인한다.
 
 ---
 
@@ -142,11 +153,6 @@ Notion/GitHub 연동은 Codex 앱의 커넥터와 로컬 자동화를 통해 수
 
 ---
 
-## 향후 발전 방향
+## 다음 문서
 
-- [ ] Agent별 standards 문서 분리
-- [ ] MyBatis, DTO, 테스트 템플릿 추가
-- [ ] 응답 품질 체크리스트 자동화
-- [ ] 프로젝트별 AGENTS.md 오버라이드 전략 정리
-- [ ] Kubernetes 운영 기준 통합
-- [ ] Codex 작업 검증 로그 포맷 정리
+- 장기 개선 항목은 `ROADMAP.md`에서 관리한다.

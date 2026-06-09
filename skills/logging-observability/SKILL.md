@@ -1,6 +1,6 @@
 ---
 name: logging-observability
-description: Review and improve application logging, tracing, MDC, correlation IDs, metrics, alerts, and incident diagnosability. Java/Spring API 로그, traceId, MDC, 메트릭, 알림, 장애 추적성을 개선할 때 사용한다.
+description: Java/Spring API 로그, traceId, MDC, 메트릭, 알림, 장애 추적성을 점검하거나 개선할 때 사용한다.
 ---
 
 # 로깅과 관측 가능성

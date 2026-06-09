@@ -1,6 +1,6 @@
 ---
 name: deploy-checklist
-description: Build or review production deployment checklists for backend services, DB migrations, configuration, feature flags, rollback, health checks, and monitoring. Java/Spring 배포, release, CI/CD, migration, 운영 rollout 리스크를 점검할 때 사용한다.
+description: Java/Spring 배포 체크리스트, DB 마이그레이션, 설정 누락, feature flag, 롤백, 헬스체크, 모니터링 점검이 필요할 때 사용한다.
 ---
 
 # 배포 체크리스트
