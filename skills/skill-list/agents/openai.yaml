@@ -1,0 +1,4 @@
+interface:
+  display_name: "스킬 목록"
+  short_description: "현재 사용 가능한 Codex skill 목록과 로컬 설정을 확인합니다."
+  default_prompt: "/스킬"

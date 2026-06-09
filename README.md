@@ -76,7 +76,8 @@
     ├── mybatis-xml-review/
     ├── test-generator/
     ├── logging-observability/
-    └── deploy-checklist/
+    ├── deploy-checklist/
+    └── skill-list/
 ```
 
 필요하면 이후 `standards/`, `templates/`, `prompts/`, `ci/`를 추가한다.
@@ -95,6 +96,7 @@
 | `test-generator` | JUnit, Mockito, Spring 통합 테스트 생성/보강 |
 | `logging-observability` | 로그 레벨, traceId/MDC, 메트릭, 장애 추적성 개선 |
 | `deploy-checklist` | 배포 전 migration, rollback, config, health check 점검 |
+| `skill-list` | `/스킬` 요청 시 사용 가능한 Codex skill 목록과 로컬 설정 확인 |
 
 ---
 
@@ -121,6 +123,12 @@ ln -s /path/to/codex-notes/AGENTS.md ./AGENTS.md
 ### Skill 자동 발견
 
 Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 경로 아래에 Skill 디렉터리가 있어야 한다.
+이 저장소를 원본으로 유지하고 `~/.codex/skills`에는 symlink를 두면, skill 수정사항을 복사 없이 즉시 반영할 수 있다.
+복사본을 여러 위치에 두면 저장소 버전과 실제 Codex 사용 버전이 어긋날 수 있으므로 symlink를 기본 방식으로 사용한다.
+
+```text
+~/.codex/skills/pr-review -> /path/to/codex-notes/skills/pr-review
+```
 
 ```bash
 ln -s /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
