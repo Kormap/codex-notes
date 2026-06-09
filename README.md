@@ -104,10 +104,28 @@
 
 ### 글로벌 설정
 
-`codex-notes` 저장소 루트에서 실행한다.
+`codex-notes` 저장소를 원본으로 두고, Codex가 읽는 위치에는 symlink를 둔다.
+이렇게 하면 `~/AGENTS.md` 또는 `~/.codex/AGENTS.md`를 수정해도 실제로는 저장소의 `AGENTS.md`가 수정되어 Git 변경사항으로 추적된다.
+
+```text
+~/AGENTS.md -> /path/to/codex-notes/AGENTS.md
+~/.codex/AGENTS.md -> /path/to/codex-notes/AGENTS.md
+```
+
+기존 파일을 저장소 원본으로 교체하려면 아래처럼 실행한다.
 
 ```bash
-cp AGENTS.md ~/AGENTS.md
+ln -sf /path/to/codex-notes/AGENTS.md "$HOME/AGENTS.md"
+ln -sf /path/to/codex-notes/AGENTS.md "$HOME/.codex/AGENTS.md"
+```
+
+다른 PC에서는 저장소를 먼저 clone한 뒤 같은 방식으로 연결한다.
+
+```bash
+git clone https://github.com/Kormap/codex-notes.git /path/to/codex-notes
+mkdir -p "$HOME/.codex"
+ln -sf /path/to/codex-notes/AGENTS.md "$HOME/AGENTS.md"
+ln -sf /path/to/codex-notes/AGENTS.md "$HOME/.codex/AGENTS.md"
 ```
 
 ### 프로젝트별 적용
