@@ -133,10 +133,18 @@ ln -sf /path/to/codex-notes/AGENTS.md "$HOME/.codex/AGENTS.md"
 적용할 프로젝트 디렉터리에서 실행한다.
 
 ```bash
-ln -s /path/to/codex-notes/AGENTS.md ./AGENTS.md
+ln -sfn /path/to/codex-notes/AGENTS.md ./AGENTS.md
 ```
 
-프로젝트별 규칙이 필요하면 해당 프로젝트의 `AGENTS.md`에서 이 문서를 기반으로 필요한 내용만 오버라이드한다.
+이미 `AGENTS.md`가 일반 파일이거나 디렉터리라면 먼저 내용을 확인한 뒤 교체한다.
+프로젝트별 규칙이 필요하면 해당 프로젝트의 `AGENTS.md`에서 이 문서의 공통 규칙은 유지하고, 프로젝트 고유 정책만 추가하거나 더 좁게 제한한다.
+
+예시:
+
+```text
+- 기본 언어, 검증 루프, 출력 형식은 유지
+- 이 저장소에만 필요한 빌드/테스트 명령, 배포 금지 규칙, 도메인 용어만 추가
+```
 
 ### Skill 자동 발견
 
@@ -149,7 +157,7 @@ Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 
 ```
 
 ```bash
-ln -s /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
+ln -sfn /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
 ```
 
 여러 Skill을 한 번에 연결하려면 아래처럼 반복해서 연결한다.
@@ -158,11 +166,11 @@ ln -s /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
 mkdir -p "$HOME/.codex/skills"
 for dir in /path/to/codex-notes/skills/*; do
   name=$(basename "$dir")
-  ln -s "$dir" "$HOME/.codex/skills/$name"
+  ln -sfn "$dir" "$HOME/.codex/skills/$name"
 done
 ```
 
-이미 같은 이름의 링크나 디렉터리가 있으면 먼저 상태를 확인한 뒤 교체한다.
+이미 같은 이름의 일반 디렉터리가 있으면 먼저 상태를 확인한 뒤 백업하거나 정리하고, symlink만 `ln -sfn`으로 교체한다.
 Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 Skill 목록을 다시 읽는 세션에서 확인한다.
 
 ---
