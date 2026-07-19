@@ -3,6 +3,8 @@
 > 개인 개발 표준을 정의하는 `AGENTS.md` 버전 관리 저장소  
 > Codex에서 일관된 구현, 검증, 운영 관점 판단을 수행하기 위한 개발 가이드
 
+> Codex가 읽는 실행 원본은 영어 [`AGENTS.md`](AGENTS.md)이며, 한국어 참고본은 [`docs/AGENTS.ko.md`](docs/AGENTS.ko.md)에서 확인할 수 있다.
+
 ---
 
 ## 목적
@@ -67,6 +69,8 @@
 ```text
 .
 ├── AGENTS.md                # Dev OS for Codex 본체
+├── docs/
+│   └── AGENTS.ko.md          # 한국어 참고본
 ├── README.md                # 저장소 설명
 └── skills/                  # Codex 개인 Skill
     ├── pr-review/
