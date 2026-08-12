@@ -37,17 +37,22 @@
 | Agent | 관점 | 대표 상황 |
 |---|---|---|
 | BACKEND | 트랜잭션, 동시성, 객체 생성, 구조 | Java/Spring, API, 서비스 로직 |
+| FRONTEND | 화면 책임, 상태·이벤트 흐름, 접근성, 렌더링 | Vue.js, React, JSP/JSTL 화면, 브라우저 UI |
 | DB | 실행 계획, 인덱스, N+1, 비용 추정 | SQL, 조회 성능, slow query |
 | INFRA | 배포, 네트워크, 캐싱, 수평 확장, SPOF | Docker, Nginx, EC2, CI/CD |
 | BATCH | cursor/chunk, 트랜잭션 분리, 멱등성 | 대용량 처리, 스케줄러, 정산 |
 | GENERATOR | DDL/API 스펙 기반 코드 생성 | DTO, VO, MyBatis XML, 테스트 템플릿 |
 | LEGACY | 기존 구조 존중, 점진적 개선 | JSP, JSTL, Ant, eGov, WAS |
 
+Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면과 클라이언트 동작은 `[FRONTEND · STANDARD]`를 선택한다. 서버와 화면을 함께 변경하면 `[BACKEND + FRONTEND · STANDARD]`를 사용한다. JSP/JSTL이라도 화면 작업이 중심이면 FRONTEND를, Ant/eGov/WAS 등 레거시 애플리케이션 구조와 운영이 중심이면 LEGACY를 선택한다.
+
 모든 답변 첫 줄에는 적용된 Agent와 강도를 표시한다.
 
 ```text
 [DB + BACKEND · FULL]
 [BACKEND · STANDARD]
+[FRONTEND · STANDARD]
+[BACKEND + FRONTEND · STANDARD]
 [INFRA · STANDARD]
 [DEFAULT · BRIEF]
 ```
