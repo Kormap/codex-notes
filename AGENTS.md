@@ -2,7 +2,7 @@
 
 This file defines the durable default behavior for Codex in a personal development environment. The first section defines primary behavior; the remaining sections provide Codex-specific execution defaults, developer context, and production checklists.
 
-For the Korean reference version, see [docs/AGENTS.ko.md](docs/AGENTS.ko.md). Keep the two documents semantically aligned; this English file is the executable source of truth.
+For the Korean reference version, see [docs/AGENTS.ko.md](docs/AGENTS.ko.md).
 
 ---
 
@@ -10,30 +10,35 @@ For the Korean reference version, see [docs/AGENTS.ko.md](docs/AGENTS.ko.md). Ke
 
 These principles take precedence when deciding how to approach a task.
 
+### Instruction Priority
+
+When instructions conflict, follow this order:
+
+1. System and platform safety instructions
+2. The user's current explicit request
+3. More specific project instructions and established conventions
+
+Treat this AGENTS.md as the default when higher-priority instructions do not specify a decision. State the conflict briefly when it materially affects scope, safety, or the result.
+
 ### Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface trade-offs.**
 
 Before implementing:
 
-- State assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them; do not pick silently.
-- If a simpler approach exists, say so.
-- Push back when warranted.
-- If something is unclear, name what is confusing and ask for clarification.
+- State relevant assumptions and alternatives. If a decision is unclear, explain it briefly rather than choosing silently.
 - For trivial, low-risk uncertainty, use reasonable judgment and state the default instead of blocking work.
 - Ask before proceeding when uncertainty changes data, production behavior, external cost, security, or another material decision.
+- Push back when a simpler or safer approach better meets the request.
 
 ### Simplicity First
 
 **Minimum code that solves the problem. Nothing speculative.**
 
-- Do not add unrequested features, abstractions, configuration, or dependencies.
-- Do not add flexibility or configurability that was not requested.
+- Do not add unrequested features, abstractions, configuration, dependencies, or configurability.
 - Do not add error handling for impossible scenarios.
 - Prefer simple code that remains operable under the expected production load.
 - Preserve handling for realistic failures at system boundaries, including user input, databases, networks, and external APIs.
-- If 200 lines could be 50, rewrite it.
 - Ask: “Would a senior engineer say this is overcomplicated?” If yes, simplify.
 
 ### Surgical Changes
@@ -90,16 +95,17 @@ These principles are working when diffs contain only requested changes, solution
 - Never revert user changes.
 - Do not run destructive commands without an explicit request.
 - Run the narrowest relevant test, build, or lint check after a change.
-- Never claim a check passed unless it was actually run and passed.
-- When ambiguity is low-risk, proceed with a reasonable default and state it. Ask first when it changes data, production behavior, external cost, security, or another material decision.
+- When verification fails, determine whether the failure existed before the change or was introduced by the change when practical.
+- Report the exact command, failure summary, and conclusion.
+- Do not weaken, skip, or change tests merely to obtain a passing result unless the user explicitly requests that behavior change.
 
-Final responses must be concise and include:
+For implementation, bug-fix, refactoring, configuration, or review work, final responses must be concise and include the applicable items below:
 
 - What changed
 - Files changed
 - Verification command and result
 - Remaining risks
-- For inspection or review without edits: `No changes` and `Recommended changes`
+- For inspection or review work, state whether files were changed and include recommendations only when applicable.
 
 ---
 
@@ -168,7 +174,9 @@ Use for analysis, design, architecture, and performance tuning.
 
 ---
 
-## 6. Agent Selection
+## 6. Response Profile Selection
+
+Select the response profile based on the task domain and required depth. These labels guide analysis and communication; they do not require delegating work to a separate agent.
 
 - Java, Spring, APIs, services, transactions, and server-side logic: `[BACKEND · STANDARD]`
 - Vue.js, React, JSP/JSTL views, browser UI, and client-side behavior: `[FRONTEND · STANDARD]`
@@ -184,7 +192,7 @@ Use for analysis, design, architecture, and performance tuning.
 
 ## 7. Failure Analysis Order
 
-For incidents, slowdowns, and errors, rule out higher layers first:
+For production incidents, slowdowns, and errors with no clear cause, use this default investigation order:
 
 1. Infrastructure: network, server resources, deployment, proxy, container
 2. Database: query cost, indexes, execution plan, locks
@@ -269,14 +277,17 @@ Trigger: JSP, JSTL, Ant, Maven legacy systems, eGov, or WAS.
 
 ## 9. Code Writing Rules
 
-- Use camelCase for Java variables and methods.
-- Follow the existing package structure.
-- Avoid excessive checked exceptions; prefer a custom runtime exception when appropriate.
-- Use SLF4J and Logback for logging.
-- Select log levels that support production diagnosis.
+### General
+
 - Comment only on business intent or non-obvious reasoning.
 - Add dependencies only when the benefit is clear.
 - Add the smallest useful test coverage for the change.
+- When recommending an implementable change, include the code needed to apply it.
+
+### Java/Spring
+
+- For Java/Spring work, use camelCase for variables and methods, follow the existing package structure, and avoid excessive checked exceptions; prefer a custom runtime exception when appropriate.
+- For Java/Spring work, use SLF4J and Logback with log levels that support production diagnosis.
 
 ---
 
@@ -284,9 +295,27 @@ Trigger: JSP, JSTL, Ant, Maven legacy systems, eGov, or WAS.
 
 - Do not list textbook definitions.
 - Do not repeat introductory syntax explanations.
-- Do not provide explanation without the code needed to apply it.
 - Do not end with only “more information is needed.”
 - Do not leave placeholder-level incomplete code.
 - Do not perform unrelated refactoring.
 - Do not revert user changes.
 - Do not claim verification that was not performed.
+
+---
+
+## 11. Security and Sensitive Data
+
+- Never expose or commit secrets, including API keys, tokens, passwords, private keys, connection strings, or personally identifiable information.
+- Mask sensitive values in logs, terminal output, examples, screenshots, and responses.
+- Do not copy production data into test fixtures, commits, or generated artifacts without explicit user authorization.
+- If a task requires handling a secret, use the existing secret-management mechanism and report only non-sensitive identifiers or status.
+
+---
+
+## 12. Documentation Synchronization
+
+`AGENTS.md` is the executable English source of truth. `docs/AGENTS.ko.md` is its Korean reference translation.
+
+- Any semantic change to `AGENTS.md` must be reflected in `docs/AGENTS.ko.md` in the same change.
+- Preserve each document's established section structure while keeping rule priority and normative meaning aligned.
+- Before completing a documentation change, review the diff of both files and report whether synchronization was verified.
