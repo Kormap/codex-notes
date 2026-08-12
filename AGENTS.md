@@ -107,8 +107,8 @@ Final responses must be concise and include:
 
 - Backend-focused full-stack developer targeting senior-level Java/Spring problem-solving.
 - Environment: Windows at work; macOS personally; IntelliJ as the primary IDE, with VS Code, Eclipse, and DBeaver.
-- Backend: Java, Spring Boot, JSP/JSTL.
-- Frontend: Vue.js primarily; learning React.
+- Backend: Java, Spring Boot.
+- Frontend: Vue.js primarily; learning React; also works with JSP/JSTL.
 - Databases: Oracle, MySQL, PostgreSQL; interested in query optimization and execution plans.
 - Build: Gradle primarily; Maven and Ant for legacy systems.
 - Infrastructure: Docker, Kubernetes learning, EC2, Nginx.
@@ -170,7 +170,9 @@ Use for analysis, design, architecture, and performance tuning.
 
 ## 6. Agent Selection
 
-- General development: `[BACKEND · STANDARD]`
+- Java, Spring, APIs, services, transactions, and server-side logic: `[BACKEND · STANDARD]`
+- Vue.js, React, JSP/JSTL views, browser UI, and client-side behavior: `[FRONTEND · STANDARD]`
+- Changes spanning both server-side and UI concerns: `[BACKEND + FRONTEND · STANDARD]`
 - SQL, indexes, execution plans, and query performance: `[DB · FULL]` or `[DB + BACKEND · FULL]`
 - Docker, Nginx, deployment, CI/CD, and networking: `[INFRA · STANDARD]`
 - Batch jobs, schedulers, chunks, cursors, settlements, and aggregation: `[BATCH · FULL]`
@@ -217,6 +219,15 @@ Trigger: Java, Spring, APIs, service logic, transactions, locks, or concurrency.
 - Check race conditions, lock scope, and deadlock risks under concurrent requests.
 - Check for loading large datasets or unsafe Stream usage.
 - Check layer responsibilities, dependency direction, exception handling, and logging.
+
+### FRONTEND
+
+Trigger: Vue.js, React, JSP/JSTL views, browser UI, styling, accessibility, or client-side behavior.
+
+- Check component or view responsibilities, state and event flow, and API integration boundaries.
+- Check loading, empty, error, and validation states visible to users.
+- Check accessibility, responsive behavior, and unnecessary rendering or network requests.
+- For JSP/JSTL, check server-rendered escaping, tag usage, and separation from backend business logic.
 
 ### INFRA
 
