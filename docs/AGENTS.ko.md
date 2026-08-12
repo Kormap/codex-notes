@@ -93,7 +93,7 @@
 
 - Java/Spring 기준 시니어 수준 문제 해결 역량을 목표로 하는 백엔드 중심 풀스택 개발자다.
 - 회사에서는 Windows, 개인적으로는 macOS를 사용하며 IntelliJ를 주력으로 VS Code, Eclipse, DBeaver도 사용한다.
-- Backend: Java, Spring Boot, JSP/JSTL. Frontend: Vue.js 주력, React 학습 중.
+- Backend: Java, Spring Boot. Frontend: Vue.js 주력, React 학습 중이며 JSP/JSTL도 사용한다.
 - DB: Oracle, MySQL, PostgreSQL. Build: Gradle 주력, Maven/Ant 레거시.
 - Infra: Docker, Kubernetes 학습 중, EC2, Nginx. 기타: Git, REST API, 레거시+신규 혼합 환경.
 
@@ -121,11 +121,14 @@
 | Agent | 대표 영역 |
 |---|---|
 | BACKEND | Java/Spring, API, 서비스, 트랜잭션, 동시성 |
+| FRONTEND | Vue.js, React, JSP/JSTL 화면, 브라우저 UI, 클라이언트 동작 |
 | DB | SQL, 인덱스, 실행계획, 조회 성능 |
 | INFRA | Docker, Nginx, 배포, CI/CD, 네트워크 |
 | BATCH | 대용량, 스케줄러, chunk/cursor, 집계 |
 | GENERATOR | DTO/VO, MyBatis XML, 반복 코드 생성 |
 | LEGACY | JSP/JSTL, Ant, eGov, WAS |
+
+Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면과 클라이언트 동작은 `[FRONTEND · STANDARD]`를 선택한다. 서버와 화면을 함께 변경하면 `[BACKEND + FRONTEND · STANDARD]`를 사용한다. JSP/JSTL이라도 화면 작업이 중심이면 FRONTEND를, Ant/eGov/WAS 등 레거시 애플리케이션 구조와 운영이 중심이면 LEGACY를 선택한다.
 
 ## 6. 분석 순서와 체크리스트
 
@@ -140,6 +143,7 @@
 
 - DB: Full Scan, 인덱스 미사용, filesort/temp table, 조인 방식, 예상 rows, N+1, count, OFFSET을 점검하고 필요 시 인덱스 DDL·쿼리 개선안을 제시한다.
 - BACKEND: `@Transactional`, 외부 API 호출 위치, 동시성/데드락, 대량 데이터 로딩, 레이어, 예외, 로그를 점검한다.
+- FRONTEND: 컴포넌트/화면 책임, 상태·이벤트 흐름, API 연동 경계, 로딩·빈 결과·오류·검증 상태, 접근성, 반응형 동작, 불필요한 렌더링·네트워크 요청을 점검한다. JSP/JSTL은 출력 이스케이프, 태그 사용, 백엔드 비즈니스 로직과의 분리도 확인한다.
 - INFRA: 요청 흐름, SPOF, 리소스 제한, 헬스체크, graceful shutdown, 캐시/로드밸런싱/확장성, 모니터링을 점검한다.
 - BATCH: cursor와 chunk 선택, 메모리와 chunk size, 커밋/재시작, 멱등성, 진행률, 테이블 락을 점검한다.
 - GENERATOR: placeholder, `TODO`, 빈 메서드 없이 DDL/API 스펙의 타입, nullability, validation을 반영해 즉시 사용할 수 있는 코드를 생성한다.
