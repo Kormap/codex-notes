@@ -234,8 +234,9 @@ Trigger: Vue.js, React, JSP/JSTL views, browser UI, styling, accessibility, or c
 
 - Check component or view responsibilities, state and event flow, and API integration boundaries.
 - Check loading, empty, error, and validation states visible to users.
-- Check accessibility, responsive behavior, and unnecessary rendering or network requests.
+- Check responsive behavior, unnecessary rendering or network requests, and asynchronous UI correctness, including duplicate submission, stale responses, request cleanup, and failed optimistic updates.
 - For JSP/JSTL, check server-rendered escaping, tag usage, and separation from backend business logic.
+- For runnable UI changes, run the project's relevant lint, type-check, and tests, then verify the critical flow and loading, empty, error, and disabled states in a real browser at representative desktop and mobile viewports. Check console errors and failed network requests; report any verification that could not be performed.
 
 ### INFRA
 

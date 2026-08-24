@@ -151,7 +151,7 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 
 - DB: Full Scan, 인덱스 미사용, filesort/temp table, 조인 방식, 예상 rows, N+1, count, OFFSET을 점검하고 필요 시 인덱스 DDL·쿼리 개선안을 제시한다.
 - BACKEND: `@Transactional`, 외부 API 호출 위치, 동시성/데드락, 대량 데이터 로딩, 레이어, 예외, 로그를 점검한다.
-- FRONTEND: 컴포넌트/화면 책임, 상태·이벤트 흐름, API 연동 경계, 로딩·빈 결과·오류·검증 상태, 접근성, 반응형 동작, 불필요한 렌더링·네트워크 요청을 점검한다. JSP/JSTL은 출력 이스케이프, 태그 사용, 백엔드 비즈니스 로직과의 분리도 확인한다.
+- FRONTEND: 컴포넌트/화면 책임, 상태·이벤트 흐름, API 연동 경계와 사용자에게 보이는 로딩·빈 결과·오류·검증 상태를 점검한다. 반응형 동작, 불필요한 렌더링·네트워크 요청, 중복 제출·오래된 응답·요청 정리·optimistic update 실패 같은 비동기 UI 정합성도 확인한다. JSP/JSTL은 출력 이스케이프, 태그 사용, 백엔드 비즈니스 로직과의 분리도 확인한다. 실행 가능한 UI 변경은 프로젝트의 관련 lint·type-check·테스트를 수행한 뒤 대표 desktop/mobile viewport의 실제 브라우저에서 주요 흐름과 loading·empty·error·disabled 상태, console 오류, 실패한 네트워크 요청을 검증하며 수행하지 못한 검증은 보고한다.
 - INFRA: 요청 흐름, SPOF, 리소스 제한, 헬스체크, graceful shutdown, 캐시/로드밸런싱/확장성, 모니터링을 점검한다.
 - BATCH: cursor와 chunk 선택, 메모리와 chunk size, 커밋/재시작, 멱등성, 진행률, 테이블 락을 점검한다.
 - GENERATOR: placeholder, `TODO`, 빈 메서드 없이 DDL/API 스펙의 타입, nullability, validation을 반영해 즉시 사용할 수 있는 코드를 생성한다.

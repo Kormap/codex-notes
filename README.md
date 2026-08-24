@@ -86,6 +86,13 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
     ├── test-generator/
     ├── logging-observability/
     ├── deploy-checklist/
+    ├── frontend-ui-review/
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── jsp.md
+    │       ├── vue.md
+    │       ├── react.md
+    │       └── css-ui.md
     └── skill-list/
 ```
 
@@ -105,7 +112,21 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 | `test-generator` | JUnit, Mockito, Spring 통합 테스트 생성/보강 |
 | `logging-observability` | 로그 레벨, traceId/MDC, 메트릭, 장애 추적성 개선 |
 | `deploy-checklist` | 배포 전 migration, rollback, config, health check 점검 |
+| `frontend-ui-review` | JSP/JSTL, Vue, React, CSS 구현·리뷰 시 상태 정합성, XSS, 반응형 UI, 브라우저 동작과 시각 회귀 점검 |
 | `skill-list` | `/스킬` 요청 시 사용 가능한 Codex skill 목록과 로컬 설정 확인 |
+
+### frontend-ui-review
+
+`frontend-ui-review`는 하나의 Skill로 호출한다. 공통 작업 흐름은 `SKILL.md`에 두고, 작업 대상에 맞는 지침만 `references/`에서 선택해서 읽는다.
+
+| 작업 대상 | 참고 지침 |
+|---|---|
+| JSP/JSTL | `references/jsp.md` |
+| Vue | `references/vue.md` |
+| React | `references/react.md` |
+| CSS 또는 화면 품질 | `references/css-ui.md` |
+
+여러 기술이 섞인 화면은 관련 문서를 조합한다. 예를 들어 JSP에서 Vue와 CSS를 함께 수정하면 `jsp.md`, `vue.md`, `css-ui.md`를 읽는다.
 
 ---
 
