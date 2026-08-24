@@ -1,0 +1,8 @@
+# Codex desktop bundled-skill baseline.
+# Keep this list in sync only after updating Codex on every machine.
+imagegen
+openai-docs
+plugin-creator
+review-agent
+skill-creator
+skill-installer
