@@ -73,10 +73,17 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 
 ```text
 .
+├── .githooks/               # pull/push 연동 doctor hook
+│   ├── post-merge
+│   ├── post-rewrite
+│   └── pre-push
 ├── AGENTS.md                # Dev OS for Codex 본체
 ├── docs/
 │   └── AGENTS.ko.md          # 한국어 참고본
 ├── README.md                # 저장소 설명
+├── scripts/
+│   ├── doctor.sh             # 저장소·Skill·설치 상태 자동 점검
+│   └── setup.sh              # Skill symlink·Git hook 최초 설정
 └── skills/                  # Codex 개인 Skill
     ├── pr-review/
     ├── spring-transaction-audit/
@@ -86,7 +93,20 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
     ├── test-generator/
     ├── logging-observability/
     ├── deploy-checklist/
+    ├── data-migration/
+    │   ├── README.md
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml
+    │   └── references/
+    │       ├── field-confirmation.md
+    │       ├── incremental-cdc.md
+    │       ├── migration-contract.md
+    │       ├── sql-generation.md
+    │       ├── spring-scheduler-migration.md
+    │       └── tobe-project-mapping.md
     ├── frontend-ui-review/
+    │   ├── README.md
     │   ├── SKILL.md
     │   └── references/
     │       ├── jsp.md
@@ -104,29 +124,19 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 
 | Skill | 용도 |
 |---|---|
-| `pr-review` | PR 변경점의 버그, 성능, 테스트 누락, 운영 리스크 리뷰 |
-| `spring-transaction-audit` | Spring 트랜잭션, 락, 커넥션 점유, 동시성 점검 |
-| `query-plan-review` | SQL 실행계획, 인덱스, 조인, 페이징 병목 분석 |
-| `jpa-performance-review` | JPA N+1, fetch 전략, 영속성 컨텍스트 비용 점검 |
-| `mybatis-xml-review` | MyBatis XML 동적 SQL, resultMap, count/paging 리뷰 |
-| `test-generator` | JUnit, Mockito, Spring 통합 테스트 생성/보강 |
-| `logging-observability` | 로그 레벨, traceId/MDC, 메트릭, 장애 추적성 개선 |
-| `deploy-checklist` | 배포 전 migration, rollback, config, health check 점검 |
-| `frontend-ui-review` | JSP/JSTL, Vue, React, CSS 구현·리뷰 시 상태 정합성, XSS, 반응형 UI, 브라우저 동작과 시각 회귀 점검 |
-| `skill-list` | `/스킬` 요청 시 사용 가능한 Codex skill 목록과 로컬 설정 확인 |
+| [`pr-review`](skills/pr-review/README.md) | PR 변경점의 버그, 성능, 테스트 누락, 운영 리스크 리뷰 |
+| [`spring-transaction-audit`](skills/spring-transaction-audit/README.md) | Spring 트랜잭션, 락, 커넥션 점유, 동시성 점검 |
+| [`query-plan-review`](skills/query-plan-review/README.md) | SQL 실행계획, 인덱스, 조인, 페이징 병목 분석 |
+| [`jpa-performance-review`](skills/jpa-performance-review/README.md) | JPA N+1, fetch 전략, 영속성 컨텍스트 비용 점검 |
+| [`mybatis-xml-review`](skills/mybatis-xml-review/README.md) | MyBatis XML 동적 SQL, resultMap, count/paging 리뷰 |
+| [`test-generator`](skills/test-generator/README.md) | JUnit, Mockito, Spring 통합 테스트 생성/보강 |
+| [`logging-observability`](skills/logging-observability/README.md) | 로그 레벨, traceId/MDC, 메트릭, 장애 추적성 개선 |
+| [`deploy-checklist`](skills/deploy-checklist/README.md) | 배포 전 migration, rollback, config, health check 점검 |
+| [`data-migration`](skills/data-migration/README.md) | source/target DDL과 TO-BE 프로젝트 로직 기반 매핑·SQL 생성, 데이터 이전·통합·배치 실행, 대사와 컷오버·복구 점검 |
+| [`frontend-ui-review`](skills/frontend-ui-review/README.md) | JSP/JSTL, Vue, React, CSS 구현·리뷰 시 상태 정합성, XSS, 반응형 UI, 브라우저 동작과 시각 회귀 점검 |
+| [`skill-list`](skills/skill-list/README.md) | `/스킬` 요청 시 사용 가능한 Codex skill 목록과 로컬 설정 확인 |
 
-### frontend-ui-review
-
-`frontend-ui-review`는 하나의 Skill로 호출한다. 공통 작업 흐름은 `SKILL.md`에 두고, 작업 대상에 맞는 지침만 `references/`에서 선택해서 읽는다.
-
-| 작업 대상 | 참고 지침 |
-|---|---|
-| JSP/JSTL | `references/jsp.md` |
-| Vue | `references/vue.md` |
-| React | `references/react.md` |
-| CSS 또는 화면 품질 | `references/css-ui.md` |
-
-여러 기술이 섞인 화면은 관련 문서를 조합한다. 예를 들어 JSP에서 Vue와 CSS를 함께 수정하면 `jsp.md`, `vue.md`, `css-ui.md`를 읽는다.
+각 링크는 상세 설명으로 연결된다. Codex가 실제 실행할 지침의 원본은 각 디렉터리의 `SKILL.md`다.
 
 ---
 
@@ -179,29 +189,61 @@ ln -sfn /path/to/codex-notes/AGENTS.md ./AGENTS.md
 ### Skill 자동 발견
 
 Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 경로 아래에 Skill 디렉터리가 있어야 한다.
-이 저장소를 원본으로 유지하고 `~/.codex/skills`에는 symlink를 두면, skill 수정사항을 복사 없이 즉시 반영할 수 있다.
+공식 사용자 경로인 `~/.agents/skills`에 저장소 Skill 디렉터리의 symlink를 두면, skill 수정사항을 복사 없이 즉시 반영할 수 있다.
 복사본을 여러 위치에 두면 저장소 버전과 실제 Codex 사용 버전이 어긋날 수 있으므로 symlink를 기본 방식으로 사용한다.
 
+저장소를 clone한 직후에는 다음 명령을 한 번 실행한다. 반복 실행해도 이미 올바른 symlink와 hook 설정은 유지된다.
+
+```bash
+./scripts/setup.sh
+```
+
+setup은 모든 저장소 Skill을 공식 사용자 경로에 연결하고, `core.hooksPath=.githooks` 설정과 doctor 검증까지 수행한다. 기존 일반 파일·디렉터리나 다른 대상을 가리키는 symlink는 덮어쓰지 않고 실패한다.
+
+아래 명령은 setup을 사용하지 않고 개별 Skill을 수동 연결할 때만 사용한다.
+
 ```text
-~/.codex/skills/pr-review -> /path/to/codex-notes/skills/pr-review
+~/.agents/skills/pr-review -> /path/to/codex-notes/skills/pr-review
 ```
 
 ```bash
-ln -sfn /path/to/codex-notes/skills/pr-review "$HOME/.codex/skills/pr-review"
+mkdir -p "$HOME/.agents/skills"
+ln -sfn /path/to/codex-notes/skills/pr-review "$HOME/.agents/skills/pr-review"
 ```
 
 여러 Skill을 한 번에 연결하려면 아래처럼 반복해서 연결한다.
 
 ```bash
-mkdir -p "$HOME/.codex/skills"
-for dir in /path/to/codex-notes/skills/*; do
+mkdir -p "$HOME/.agents/skills"
+for dir in /path/to/codex-notes/skills/*/; do
   name=$(basename "$dir")
-  ln -sfn "$dir" "$HOME/.codex/skills/$name"
+  ln -sfn "$dir" "$HOME/.agents/skills/$name"
 done
 ```
 
 이미 같은 이름의 일반 디렉터리가 있으면 먼저 상태를 확인한 뒤 백업하거나 정리하고, symlink만 `ln -sfn`으로 교체한다.
 Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 Skill 목록을 다시 읽는 세션에서 확인한다.
+
+### Doctor와 Git hook
+
+저장소 구조, Skill 메타데이터·링크, 공식 사용자 경로의 symlink, bundled skill 기준 목록을 한 번에 점검한다.
+
+```bash
+./scripts/doctor.sh
+```
+
+`skill-list` Skill은 호출될 때 doctor를 먼저 실행한다. `setup.sh`가 Git hook을 활성화하므로 push 직전과 pull의 merge/rebase 완료 후에도 doctor가 실행된다.
+
+```bash
+./scripts/setup.sh
+```
+
+hook만 수동 활성화하려면 `git config --local core.hooksPath .githooks`를 실행한다. 이 설정은 Git으로 공유되지 않으므로 PC별 clone에서 setup을 한 번 실행해야 한다.
+
+- `pre-push`: 오류가 있으면 push를 중단한다.
+- `post-merge`: merge 또는 fast-forward pull 완료 후 실행한다.
+- `post-rewrite`: rebase pull 완료 후 실행한다.
+- 변경이 없는 `git pull`은 Git이 완료 hook을 호출하지 않으므로 doctor가 실행되지 않는다.
 
 ---
 

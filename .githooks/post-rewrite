@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ "${1:-}" = 'rebase' ] || exit 0
+
+repo_root=$(git rev-parse --show-toplevel) || exit 1
+"$repo_root/scripts/doctor.sh"
