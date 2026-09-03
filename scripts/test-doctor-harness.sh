@@ -23,6 +23,7 @@ new_fixture() {
 
   mkdir -p "$fixture_repo" "$fixture_home/.agents/skills" "$fixture_home/.codex/skills/.system" || exit 1
   cp -R "$repo_root/." "$fixture_repo" 2>/dev/null || exit 1
+  seed_trace_runs
 
   for fixture_skill in "$fixture_repo"/skills/*/SKILL.md; do
     [ -f "$fixture_skill" ] || continue
@@ -36,6 +37,178 @@ new_fixture() {
     esac
     mkdir -p "$fixture_home/.codex/skills/.system/$fixture_system_skill" || exit 1
   done < "$fixture_repo/skills/codex-system-skills.txt"
+}
+
+write_trace() {
+  trace_id=$1
+  recorded_at=$2
+  task_type=$3
+  trace_level=$4
+  final_result=$5
+  attempt_count=$6
+  rework_count=$7
+  has_unverified=$8
+  has_remaining_risk=$9
+  baseline_version=${10}
+  task_reference=${11}
+  evaluator_id=${12}
+  repeated_trigger=${13}
+
+  case "$has_unverified" in
+    true) unverified_value='테스트 fixture에서 의도적으로 미검증 항목을 남긴다.' ;;
+    *) unverified_value='NONE' ;;
+  esac
+  case "$has_remaining_risk" in
+    true) remaining_risks_value='테스트 fixture에서 의도적으로 남은 위험을 남긴다.' ;;
+    *) remaining_risks_value='NONE' ;;
+  esac
+
+  cat > "$fixture_repo/.harness/traces/runs/$trace_id.md" <<EOF
+# 최소 Harness Trace
+
+## 메타데이터
+
+- \`schema_version\`: \`1\`
+- \`trace_id\`: \`$trace_id\`
+- \`recorded_at\`: \`$recorded_at\`
+- \`baseline_version\`: \`$baseline_version\`
+- \`trace_level\`: \`$trace_level\`
+- \`final_result\`: \`$final_result\`
+
+## 작업
+
+- \`task_type\`: \`$task_type\`
+- \`task_reference\`: \`$task_reference\`
+- \`request_summary\`: \`doctor 회귀 테스트 fixture\`
+- \`in_scope\`: \`Harness Diagnostics fixture\`
+- \`out_of_scope\`: \`NONE\`
+
+## 성공 조건 (\`success_criteria\`)
+
+- [x] \`SC-01\`: \`fixture trace가 report source 대조에 필요한 필드를 제공한다.\`
+
+## 적용 Skill
+
+- \`applied_skills\`: \`NONE\`
+
+## 변경
+
+- \`changed_files\`: \`NONE\`
+- \`change_summary\`: \`fixture trace 생성\`
+- \`approval_summary\`: \`NONE\`
+- \`external_actions\`: \`NONE\`
+
+## 시도와 재작업
+
+- \`attempt_count\`: \`$attempt_count\`
+- \`rework_count\`: \`$rework_count\`
+- \`rework_summary\`: \`NONE\`
+
+## 검증 결과 (\`evaluator_results\`)
+
+| 평가자 (\`evaluator_id\`) | 명령 또는 방법 (\`command_or_method\`) | 결과 (\`result\`) | 근거 요약 (\`evidence_summary\`) |
+|---|---|---|---|
+| \`$evaluator_id\` | \`fixture\` | \`$final_result\` | \`fixture result\` |
+
+## 미검증 항목과 남은 위험
+
+- \`unverified\`: \`$unverified_value\`
+- \`remaining_risks\`: \`$remaining_risks_value\`
+
+## 최종 판정
+
+- \`result_reason\`: \`fixture 최종 판정\`
+- \`user_report_consistency\`: \`CONSISTENT\`
+EOF
+
+  [ "$trace_level" = 'extended' ] || return 0
+
+  cat >> "$fixture_repo/.harness/traces/runs/$trace_id.md" <<EOF
+
+## 확장 메타데이터
+
+- \`trigger_high_risk\`: \`false\`
+- \`trigger_repeated_evaluation\`: \`$repeated_trigger\`
+- \`trigger_multi_agent\`: \`false\`
+
+## 고위험 근거 (\`high_risk_evidence\`)
+
+### 위험 (\`risks\`)
+
+| 위험 (\`risk\`) | 영향 (\`impact\`) | 통제 (\`control\`) | 잔여 위험 (\`residual_risk\`) |
+|---|---|---|---|
+| \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` |
+
+### 승인 (\`approvals\`)
+
+| 요청 시각 (\`requested_at\`) | 행동과 정확한 대상 (\`action_target\`) | 결정 (\`decision\`) | 수행 (\`performed\`) | 근거 요약 (\`evidence_summary\`) |
+|---|---|---|---|---|
+| \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` |
+
+### 외부 행동과 복구 (\`external_actions_recovery\`)
+
+- \`external_action_details\`: \`NOT_APPLICABLE\`
+- \`failure_observed\`: \`NOT_APPLICABLE\`
+- \`recovery_decision\`: \`NOT_APPLICABLE\`
+- \`recovery_result\`: \`NOT_APPLICABLE\`
+
+## 반복 평가 근거 (\`repeated_evaluation_evidence\`)
+
+- \`run_id\`: \`run-02\`
+- \`comparison_target\`: \`run-01\`
+- \`controlled_inputs\`: \`동일 fixture\`
+
+### 비교 결과 (\`comparison_results\`)
+
+| 평가자 (\`evaluator_id\`) | 이전 결과 (\`previous_result\`) | 현재 결과 (\`current_result\`) | 품질 변화 (\`quality_change\`) | 근거 요약 (\`evidence_summary\`) |
+|---|---|---|---|---|
+| \`$evaluator_id\` | \`FAIL\` | \`PASS\` | \`IMPROVED\` | \`fixture comparison\` |
+
+- \`rework_cause\`: \`이전 실행 실패\`
+- \`comparison_limitations\`: \`NONE\`
+
+## 멀티에이전트 근거 (\`multi_agent_evidence\`)
+
+### 역할 배정과 소유권 (\`agent_assignments\`)
+
+| 에이전트·작업 ID (\`agent_task_id\`) | 역할 (\`role\`) | 배정 범위 (\`assigned_scope\`) | 쓰기 가능 파일 (\`writable_files\`) | 상태 (\`status\`) |
+|---|---|---|---|---|
+| \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` |
+
+### 위임과 역할 결과 (\`delegations\`)
+
+| 위임자 (\`from\`) | 수임자 (\`to\`) | 계약 요약 (\`contract_summary\`) | 결과 채택 (\`result_adopted\`) | 결과·근거 요약 (\`result_evidence_summary\`) |
+|---|---|---|---|---|
+| \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` | \`NOT_APPLICABLE\` |
+
+- \`role_separation\`: \`NOT_APPLICABLE\`
+- \`ownership_conflicts\`: \`NOT_APPLICABLE\`
+- \`escalations\`: \`NOT_APPLICABLE\`
+
+### 통합과 최종 검증 (\`integration_verification\`)
+
+- \`integrated_by\`: \`NOT_APPLICABLE\`
+- \`adopted_changes\`: \`NOT_APPLICABLE\`
+- \`rejected_or_reworked_results\`: \`NOT_APPLICABLE\`
+- \`integration_evaluator\`: \`NOT_APPLICABLE\`
+- \`independence_limitations\`: \`NOT_APPLICABLE\`
+EOF
+}
+
+seed_trace_runs() {
+  mkdir -p "$fixture_repo/.harness/traces/runs" || exit 1
+
+  write_trace tr-20260902-trace-contract-01 2026-09-02T21:28:39+09:00 feature minimum PASS 1 2 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract false
+  write_trace tr-20260902-task-evaluator-contract-01 2026-09-02T22:02:03+09:00 feature minimum PASS 1 0 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract false
+  write_trace tr-20260902-markdown-template-rendering-01 2026-09-02T22:07:44+09:00 bug_fix minimum PASS 1 0 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract false
+  write_trace tr-20260902-backend-api-feature-contract-01 2026-09-02T22:12:24+09:00 feature minimum PASS 1 1 true true 0.1.0-initial .harness/tasks/backend-api-feature.md backend-api-feature false
+  write_trace tr-20260902-doctor-harness-contract-01 2026-09-02T22:22:51+09:00 behavior_change minimum PASS 1 1 false true 0.1.0-initial .harness/tasks/harness-contract.md current-request false
+  write_trace tr-20260903-harness-pilot-01 2026-09-03T09:14:37+09:00 behavior_change extended PASS 3 2 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract true
+  write_trace tr-20260903-report-source-recorded-at-01 2026-09-03T10:59:21+09:00 bug_fix extended FAIL 1 0 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract true
+  write_trace tr-20260903-report-source-task-type-01 2026-09-03T10:59:22+09:00 bug_fix minimum FAIL 1 0 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract false
+  write_trace tr-20260903-report-source-trace-level-01 2026-09-03T10:59:23+09:00 bug_fix minimum FAIL 1 0 true true 0.1.0-initial .harness/tasks/harness-contract.md harness-contract false
+  write_trace tr-20260903-report-source-promotion-01 2026-09-03T11:15:00+09:00 behavior_change minimum PASS 1 0 false false 0.2.0-report-source-integrity .harness/candidates/cd-20260903-report-source-integrity-01.md harness-contract false
+  write_trace tr-20260903-report-source-candidate-01 2026-09-03T11:10:00+09:00 behavior_change extended PASS 1 0 false false 0.1.0-initial .harness/candidates/cd-20260903-report-source-integrity-01.md harness-contract true
 }
 
 run_expect_pass() {
