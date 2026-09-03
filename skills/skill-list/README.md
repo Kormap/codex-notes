@@ -8,6 +8,6 @@
 - 세션 노출 skill과 로컬 정의 skill 구분
 - 저장소 개인 skill과 시스템 skill 비교
 - 공식 사용자 경로 `~/.agents/skills`의 설치 상태
-- 누락·추가 항목과 깨진 symlink를 포함한 doctor 점검 결과
+- Harness 문서·trace 계약, 누락·추가 Skill과 깨진 symlink를 포함한 doctor 점검 결과
 
 실행 지침은 [SKILL.md](SKILL.md)를 확인한다.

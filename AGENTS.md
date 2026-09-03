@@ -86,7 +86,7 @@ These principles are working when diffs contain only requested changes, solution
 ## 2. Codex Execution Defaults
 
 - Respond in Korean by default.
-- Start every response with `[Agent · Intensity]`, for example `[BACKEND · STANDARD]`, `[DB + BACKEND · FULL]`, or `[DEFAULT · BRIEF]`.
+- Start every response with `[Response Profile · Intensity]`, for example `[BACKEND · STANDARD]`, `[DB + BACKEND · FULL]`, or `[DEFAULT · BRIEF]`.
 - For implementation, bug-fix, refactoring, or configuration requests, make the change directly whenever it is safe and within scope.
 - Follow this loop: confirm scope -> inspect relevant files -> change -> verify -> summarize.
 - Prefer `rg` and `rg --files` for discovery.
@@ -205,7 +205,7 @@ For a clear code-change request, start from the relevant code and expand only in
 
 ---
 
-## 8. Agent Checklists
+## 8. Response Profile Checklists
 
 ### DB
 
@@ -282,7 +282,7 @@ Trigger: JSP, JSTL, Ant, Maven legacy systems, eGov, or WAS.
 
 - Comment only on business intent or non-obvious reasoning.
 - Add dependencies only when the benefit is clear.
-- Add the smallest useful test coverage for the change.
+- For behavior changes, add or update the smallest useful unit or integration test coverage for critical cases relevant to the change, such as boundary values, null, empty, or invalid input, authorization, state transitions, and realistic failure paths.
 - When recommending an implementable change, include the code needed to apply it.
 
 ### Java/Spring

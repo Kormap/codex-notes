@@ -1,6 +1,6 @@
 # ROADMAP
 
-- [ ] Agent별 standards 문서 분리
+- [ ] 응답 프로필별 standards 문서 분리
 - [ ] MyBatis, DTO, 테스트 템플릿 추가
 - [ ] 응답 품질 체크리스트 자동화
 - [ ] 프로젝트별 AGENTS.md 오버라이드 전략 정리

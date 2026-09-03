@@ -34,7 +34,7 @@
 
 질문 맥락에서 분석 관점과 출력 강도를 자동 선택하거나 `[DB]`, `[BACKEND]` 등으로 명시 지정한다. 이 표기는 별도의 에이전트에게 작업을 위임한다는 의미가 아니다.
 
-| Agent | 관점 | 대표 상황 |
+| 응답 프로필 | 관점 | 대표 상황 |
 |---|---|---|
 | BACKEND | 트랜잭션, 동시성, 객체 생성, 구조 | Java/Spring, API, 서비스 로직 |
 | FRONTEND | 화면 책임, 상태·이벤트 흐름, 접근성, 렌더링 | Vue.js, React, JSP/JSTL 화면, 브라우저 UI |
@@ -46,7 +46,7 @@
 
 Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면과 클라이언트 동작은 `[FRONTEND · STANDARD]`를 선택한다. 서버와 화면을 함께 변경하면 `[BACKEND + FRONTEND · STANDARD]`를 사용한다. JSP/JSTL이라도 화면 작업이 중심이면 FRONTEND를, Ant/eGov/WAS 등 레거시 애플리케이션 구조와 운영이 중심이면 LEGACY를 선택한다.
 
-모든 답변 첫 줄에는 적용된 Agent와 강도를 표시한다.
+모든 답변 첫 줄에는 적용된 응답 프로필과 강도를 표시한다.
 
 ```text
 [DB + BACKEND · FULL]
@@ -78,11 +78,22 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 │   ├── post-rewrite
 │   └── pre-push
 ├── AGENTS.md                # Dev OS for Codex 본체
+├── .harness/               # 작업 실행·검증·개선을 위한 공통 Harness
+│   ├── README.md
+│   ├── baseline/           # Harness 대상 작업의 공통 기준
+│   ├── tasks/              # 대표 작업의 입력·범위·성공 조건
+│   ├── evaluators/         # 작업별 검증 방법과 판정 기준
+│   ├── policies/           # 승인 경계와 병렬 작업·파일 소유권 정책
+│   ├── roles/              # Lead와 서브에이전트의 실행 역할 계약
+│   ├── traces/             # 최소·확장 trace 템플릿과 로컬 실행 기록 계약
+│   ├── reports/            # 진단을 통과한 trace의 집계와 candidate 판단 근거
+│   └── candidates/         # baseline과 분리해 반복 비교하는 Harness 개선안
 ├── docs/
 │   └── AGENTS.ko.md          # 한국어 참고본
 ├── README.md                # 저장소 설명
 ├── scripts/
-│   ├── doctor.sh             # 저장소·Skill·설치 상태 자동 점검
+│   ├── doctor.sh             # 저장소·Harness·Skill·설치 상태 자동 진단
+│   ├── test-doctor-harness.sh # doctor Harness-Diagnostics 회귀 테스트
 │   └── setup.sh              # Skill symlink·Git hook 최초 설정
 └── skills/                  # Codex 개인 Skill
     ├── pr-review/
@@ -117,6 +128,14 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 ```
 
 필요하면 이후 `standards/`, `templates/`, `prompts/`, `ci/`를 추가한다.
+
+---
+
+## Harness
+
+`AGENTS.md`는 모든 Codex 작업에 적용한다. Harness baseline은 `AGENTS.md`만으로 재현성, 검증 증거, 또는 협업 통제가 충분하지 않은 작업에 추가 적용한다. 모든 Harness 작업은 Meta-Harness 평가를 위한 최소 trace를 남기고, 고위험·반복 품질 평가·멀티에이전트 작업은 조건에 맞게 trace와 역할·정책을 확장한다. 상세 계약은 [`.harness/README.md`](.harness/README.md), 공통 기준과 고정 용어는 [`.harness/baseline/`](.harness/baseline/README.md), 대표 작업은 [`.harness/tasks/`](.harness/tasks/README.md), 판정 기준은 [`.harness/evaluators/`](.harness/evaluators/README.md), 승인·병렬 작업 통제는 [`.harness/policies/`](.harness/policies/README.md), 실행 역할 계약은 [`.harness/roles/`](.harness/roles/README.md), trace 템플릿과 보관 규칙은 [`.harness/traces/`](.harness/traces/README.md), trace 집계와 candidate 판단 계약은 [`.harness/reports/`](.harness/reports/README.md), 개선안 평가와 승격 경계는 [`.harness/candidates/`](.harness/candidates/README.md)에서 관리한다.
+
+Harness-Diagnostics의 현재 실행 진입점은 [`scripts/doctor.sh`](scripts/doctor.sh)다. 필수 Harness 문서와 README 색인, task-evaluator 연결, trace template·로컬 run·report·candidate의 schema, enum과 참조·집계 정합성을 검사한다. 개별 작업의 성공 여부는 evaluator가 판정하며, 여러 trace의 집계와 개선안 판단은 Meta-Harness가 담당한다.
 
 ---
 
@@ -224,13 +243,30 @@ done
 이미 같은 이름의 일반 디렉터리가 있으면 먼저 상태를 확인한 뒤 백업하거나 정리하고, symlink만 `ln -sfn`으로 교체한다.
 Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 Skill 목록을 다시 읽는 세션에서 확인한다.
 
-### Doctor와 Git hook
+### Doctor, Harness-Diagnostics와 Git hook
 
-저장소 구조, Skill 메타데이터·링크, 공식 사용자 경로의 symlink, bundled skill 기준 목록을 한 번에 점검한다.
+저장소 구조, Harness 계약, Skill 메타데이터·링크, 공식 사용자 경로의 symlink와 bundled skill 기준 목록을 한 번에 점검한다.
 
 ```bash
 ./scripts/doctor.sh
 ```
+
+Harness 검사는 다음 범위를 포함한다.
+
+- 필수 Harness 문서, 루트·하위 README 색인 링크와 현재 baseline 변경 이력
+- task/evaluator ID, 파일명, 양방향 연결과 acceptance criteria mapping
+- 최소·확장 trace template의 필수 필드·섹션·표 구조
+- 존재하는 로컬 trace의 ID, 한국시간 `+09:00`, enum, placeholder와 최종 판정 정합성
+- report 템플릿의 필수 필드·표 구조, source inventory·집계 수치와 원본 trace 참조 정합성
+- candidate 템플릿의 필수 필드·표 구조, 구현 스크립트와 실제 candidate의 source report·task·evaluator 참조 및 상태·판정 정합성
+
+`doctor.sh`의 Harness 진단 회귀는 Git으로 관리하는 다음 스크립트로 검증한다. 테스트는 임시 저장소 복사본에 정상·오류 fixture를 구성하며 실제 작업 파일을 변경하지 않는다.
+
+```bash
+./scripts/test-doctor-harness.sh
+```
+
+trace template과 진단 테스트는 Git으로 관리하고, 작업별 원본 trace인 `.harness/traces/runs/*.md`는 기본적으로 Git에서 제외한다.
 
 `skill-list` Skill은 호출될 때 doctor를 먼저 실행한다. `setup.sh`가 Git hook을 활성화하므로 push 직전과 pull의 merge/rebase 완료 후에도 doctor가 실행된다.
 
