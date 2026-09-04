@@ -210,6 +210,7 @@ ln -sfn /path/to/codex-notes/AGENTS.md ./AGENTS.md
 Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 경로 아래에 Skill 디렉터리가 있어야 한다.
 공식 사용자 경로인 `~/.agents/skills`에 저장소 Skill 디렉터리의 symlink를 두면, skill 수정사항을 복사 없이 즉시 반영할 수 있다.
 복사본을 여러 위치에 두면 저장소 버전과 실제 Codex 사용 버전이 어긋날 수 있으므로 symlink를 기본 방식으로 사용한다.
+Windows Git Bash가 권한과 설정에 따라 symlink를 일반 디렉터리로 생성한 경우 doctor는 저장소와 전체 내용이 일치할 때만 이를 허용하며, 한 파일이라도 다르면 실패한다.
 
 저장소를 clone한 직후에는 다음 명령을 한 번 실행한다. 반복 실행해도 이미 올바른 symlink와 hook 설정은 유지된다.
 
@@ -245,7 +246,7 @@ Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 
 
 ### Doctor, Harness-Diagnostics와 Git hook
 
-저장소 구조, Harness 계약, Skill 메타데이터·링크, 공식 사용자 경로의 symlink와 bundled skill 기준 목록을 한 번에 점검한다.
+저장소 구조, Harness 계약, Skill 메타데이터·링크, 공식 사용자 경로의 symlink 또는 Windows 내용 일치 디렉터리와 bundled skill 기준 목록을 한 번에 점검한다.
 
 ```bash
 ./scripts/doctor.sh

@@ -2,6 +2,13 @@
 
 set -u
 
+case ${MSYSTEM:-} in
+  MINGW*|MSYS*|CYGWIN*)
+    PATH=/usr/bin:/bin:/cmd:$PATH
+    export PATH
+    ;;
+esac
+
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P) || exit 1
 test_root=$(mktemp -d "${TMPDIR:-/tmp}/codex-notes-doctor-test.XXXXXX") || exit 1
 trap 'case "$test_root" in "${TMPDIR:-/tmp}"/codex-notes-doctor-test.*) rm -rf "$test_root" ;; esac' EXIT HUP INT TERM
@@ -32,6 +39,7 @@ new_fixture() {
   done
 
   while IFS= read -r fixture_system_skill; do
+    fixture_system_skill=$(printf '%s' "$fixture_system_skill" | tr -d '\r')
     case "$fixture_system_skill" in
       ''|'#'*) continue ;;
     esac
@@ -238,8 +246,43 @@ run_expect_fail() {
   pass_test "$fixture_label"
 }
 
+run_expect_pass_windows_mode() {
+  fixture_label=$1
+  fixture_output=$fixture_root/output.txt
+  if ! MSYSTEM=MINGW64 HOME=$fixture_home "$fixture_repo/scripts/doctor.sh" > "$fixture_output" 2>&1; then
+    sed -n '1,240p' "$fixture_output" >&2
+    fail_test "$fixture_label: doctor unexpectedly failed"
+  fi
+  pass_test "$fixture_label"
+}
+
+run_expect_fail_windows_mode() {
+  fixture_label=$1
+  shift
+  fixture_output=$fixture_root/output.txt
+  if MSYSTEM=MINGW64 HOME=$fixture_home "$fixture_repo/scripts/doctor.sh" > "$fixture_output" 2>&1; then
+    sed -n '1,240p' "$fixture_output" >&2
+    fail_test "$fixture_label: doctor unexpectedly passed"
+  fi
+  for expected_text in "$@"; do
+    if ! grep -Fq "$expected_text" "$fixture_output"; then
+      sed -n '1,240p' "$fixture_output" >&2
+      fail_test "$fixture_label: missing diagnostic: $expected_text"
+    fi
+  done
+  pass_test "$fixture_label"
+}
+
 new_fixture valid
 run_expect_pass 'valid repository fixture'
+
+new_fixture windows-directory-install
+rm -rf "$fixture_home/.agents/skills/data-migration" || exit 1
+cp -R "$fixture_repo/skills/data-migration" "$fixture_home/.agents/skills/data-migration" || exit 1
+run_expect_pass_windows_mode 'Windows content-equivalent skill directory is accepted'
+printf '\nWindows drift fixture\n' >> "$fixture_home/.agents/skills/data-migration/SKILL.md" || exit 1
+run_expect_fail_windows_mode 'Windows copied skill drift is diagnosed' \
+  'data-migration: official user skill directory differs from repository'
 
 new_fixture pruned-traces
 mv "$fixture_repo/.harness/traces/runs" "$fixture_repo/.harness/traces/pruned-runs" || exit 1
@@ -297,8 +340,15 @@ run_expect_fail 'current baseline and active version history are cross-checked' 
 
 new_fixture candidate-implementation-permission
 chmod -x "$fixture_repo/.harness/candidates/implementations/cd-20260903-report-source-integrity-01/validate-report-sources.sh" || exit 1
-run_expect_fail 'candidate implementation scripts must be executable' \
-  '.harness/candidates/implementations/cd-20260903-report-source-integrity-01/validate-report-sources.sh is not executable'
+case ${MSYSTEM:-} in
+  MINGW*|MSYS*|CYGWIN*)
+    run_expect_pass 'POSIX executable-bit check is skipped on Windows'
+    ;;
+  *)
+    run_expect_fail 'candidate implementation scripts must be executable' \
+      '.harness/candidates/implementations/cd-20260903-report-source-integrity-01/validate-report-sources.sh is not executable'
+    ;;
+esac
 
 new_fixture mapping-errors
 awk '

@@ -2,6 +2,15 @@
 
 set -u
 
+is_windows_posix=false
+case ${MSYSTEM:-} in
+  MINGW*|MSYS*|CYGWIN*)
+    is_windows_posix=true
+    PATH=/usr/bin:/bin:/cmd:$PATH
+    export PATH
+    ;;
+esac
+
 if [ -z "${HOME:-}" ]; then
   printf '%s\n' '[FAIL] HOME must be set to inspect installed skills' >&2
   exit 1
@@ -1017,20 +1026,22 @@ else
 fi
 
 for hook_name in pre-push post-merge post-rewrite; do
-  if [ ! -x "$repo_root/.githooks/$hook_name" ]; then
+  if [ ! -f "$repo_root/.githooks/$hook_name" ] || \
+     { [ "$is_windows_posix" = false ] && [ ! -x "$repo_root/.githooks/$hook_name" ]; }; then
     fail ".githooks/$hook_name is missing or not executable"
   fi
 done
 
 for executable_script in scripts/setup.sh scripts/doctor.sh skills/skill-list/scripts/doctor.sh; do
-  if [ ! -x "$repo_root/$executable_script" ]; then
+  if [ ! -f "$repo_root/$executable_script" ] || \
+     { [ "$is_windows_posix" = false ] && [ ! -x "$repo_root/$executable_script" ]; }; then
     fail "$executable_script is missing or not executable"
   fi
 done
 
 for candidate_implementation_script in "$repo_root"/.harness/candidates/implementations/*/*.sh; do
   [ -f "$candidate_implementation_script" ] || continue
-  if [ ! -x "$candidate_implementation_script" ]; then
+  if [ "$is_windows_posix" = false ] && [ ! -x "$candidate_implementation_script" ]; then
     fail "${candidate_implementation_script#"$repo_root"/} is not executable"
   fi
 done
@@ -1724,17 +1735,22 @@ else
   while IFS= read -r skill_name; do
     installed_path=$user_skills_dir/$skill_name
     expected_path=$repo_root/skills/$skill_name
-    if [ ! -L "$installed_path" ]; then
-      fail "$skill_name: official user skill symlink is missing"
-      continue
-    fi
-
-    installed_target=$(CDPATH= cd -- "$installed_path" 2>/dev/null && pwd -P)
-    expected_target=$(CDPATH= cd -- "$expected_path" && pwd -P)
-    if [ "$installed_target" != "$expected_target" ]; then
-      fail "$skill_name: symlink target differs from repository"
+    if [ -L "$installed_path" ]; then
+      installed_target=$(CDPATH= cd -- "$installed_path" 2>/dev/null && pwd -P)
+      expected_target=$(CDPATH= cd -- "$expected_path" && pwd -P)
+      if [ "$installed_target" != "$expected_target" ]; then
+        fail "$skill_name: symlink target differs from repository"
+      else
+        printf '%s\n' "$skill_name" >> "$installed_skills"
+      fi
+    elif [ "$is_windows_posix" = true ] && [ -d "$installed_path" ]; then
+      if diff -qr "$expected_path" "$installed_path" >/dev/null 2>&1; then
+        printf '%s\n' "$skill_name" >> "$installed_skills"
+      else
+        fail "$skill_name: official user skill directory differs from repository"
+      fi
     else
-      printf '%s\n' "$skill_name" >> "$installed_skills"
+      fail "$skill_name: official user skill symlink is missing"
     fi
   done < "$repo_skills"
 
@@ -1751,13 +1767,13 @@ else
   fi
 
   if [ "$(wc -l < "$installed_skills" | tr -d ' ')" = "$(wc -l < "$repo_skills" | tr -d ' ')" ]; then
-    pass 'all repository skills are linked from the official user path'
+    pass 'all repository skills are current in the official user path'
   fi
 fi
 
 printf '%s\n' '[System baseline]'
 
-sed -n '/^[^#[:space:]]/p' "$repo_root/skills/codex-system-skills.txt" | sort -u > "$baseline_skills"
+sed -n '/^[^#[:space:]]/p' "$repo_root/skills/codex-system-skills.txt" | tr -d '\r' | sort -u > "$baseline_skills"
 if [ ! -d "$system_skills_dir" ]; then
   warn "$system_skills_dir is unavailable; bundled-skill comparison skipped"
 else
