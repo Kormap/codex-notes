@@ -218,7 +218,9 @@ Windows Git Bash가 권한과 설정에 따라 symlink를 일반 디렉터리로
 ./scripts/setup.sh
 ```
 
-setup은 모든 저장소 Skill을 공식 사용자 경로에 연결하고, `core.hooksPath=.githooks` 설정과 doctor 검증까지 수행한다. 기존 일반 파일·디렉터리나 다른 대상을 가리키는 symlink는 덮어쓰지 않고 실패한다.
+setup은 모든 저장소 Skill을 공식 사용자 경로에 연결하고, `core.hooksPath=.githooks` 설정과 doctor 검증까지 수행한다. Windows에서는 저장소와 전체 내용이 같은 일반 디렉터리도 그대로 유지한다. 그 외 기존 일반 파일·디렉터리나 다른 대상을 가리키는 symlink는 덮어쓰지 않고 실패한다.
+
+`.gitattributes`는 shell·hook·Markdown·YAML·텍스트 파일의 checkout 줄바꿈을 LF로 고정한다. 기존 Windows checkout에 남아 있는 CRLF 파일은 로컬 변경을 보존한 뒤 별도로 정규화해야 한다.
 
 아래 명령은 setup을 사용하지 않고 개별 Skill을 수동 연결할 때만 사용한다.
 
@@ -265,6 +267,7 @@ Harness 검사는 다음 범위를 포함한다.
 
 ```bash
 ./scripts/test-doctor-harness.sh
+sh scripts/test-doc-sync.sh
 ```
 
 trace template과 진단 테스트는 Git으로 관리하고, 작업별 원본 trace인 `.harness/traces/runs/*.md`는 기본적으로 Git에서 제외한다.
@@ -277,7 +280,7 @@ trace template과 진단 테스트는 Git으로 관리하고, 작업별 원본 t
 
 hook만 수동 활성화하려면 `git config --local core.hooksPath .githooks`를 실행한다. 이 설정은 Git으로 공유되지 않으므로 PC별 clone에서 setup을 한 번 실행해야 한다.
 
-- `pre-push`: 오류가 있으면 push를 중단한다.
+- `pre-push`: `scripts/check-doc-sync.sh`가 push 대상 커밋별 영문·한국어 지침 변경을 대조한 뒤 doctor를 실행한다. 오류가 있으면 push를 중단한다. 새 ref는 로컬 remote-tracking ref에 없는 커밋을 검사하고 삭제 ref는 건너뛴다. 번역본 도입 이전 이력은 제외한다. 원격 기준 커밋이 로컬에 없으면 검사를 중단하므로 먼저 해당 원격 이력을 fetch해야 한다.
 - `post-merge`: merge 또는 fast-forward pull 완료 후 실행한다.
 - `post-rewrite`: rebase pull 완료 후 실행한다.
 - 변경이 없는 `git pull`은 Git이 완료 hook을 호출하지 않으므로 doctor가 실행되지 않는다.

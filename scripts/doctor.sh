@@ -1019,6 +1019,9 @@ else
 fi
 
 configured_hooks_path=$(git -C "$repo_root" config --local --get core.hooksPath || true)
+if [ ! -f "$repo_root/scripts/check-doc-sync.sh" ]; then
+  fail 'scripts/check-doc-sync.sh is missing'
+fi
 if [ "$configured_hooks_path" != '.githooks' ]; then
   fail 'core.hooksPath must be .githooks'
 else

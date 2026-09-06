@@ -94,6 +94,7 @@ These principles are working when diffs contain only requested changes, solution
 - Use `apply_patch` for manual edits.
 - Never revert user changes.
 - Do not run destructive commands without an explicit request.
+- For read-only reviews, report evidence in the response without creating trace files. Create a local trace only when the user authorizes recording an artifact; this exception also applies to Harness trace requirements.
 - Run the narrowest relevant test, build, or lint check after a change.
 - When verification fails, determine whether the failure existed before the change or was introduced by the change when practical.
 - Report the exact command, failure summary, and conclusion.

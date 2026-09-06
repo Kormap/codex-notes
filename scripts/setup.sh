@@ -2,6 +2,15 @@
 
 set -eu
 
+is_windows_posix=false
+case ${MSYSTEM:-} in
+  MINGW*|MSYS*|CYGWIN*)
+    is_windows_posix=true
+    PATH=/usr/bin:/bin:/cmd:$PATH
+    export PATH
+    ;;
+esac
+
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P) || exit 1
 user_skills_dir=${HOME}/.agents/skills
 
@@ -30,6 +39,12 @@ for skill_md in "$repo_root"/skills/*/SKILL.md; do
       exit 1
     fi
     printf '[KEEP] %s\n' "$installed_path"
+  elif [ "$is_windows_posix" = true ] && [ -d "$installed_path" ]; then
+    if ! diff -qr "$skill_dir" "$installed_path" >/dev/null 2>&1; then
+      printf '[FAIL] %s: official user skill directory differs from repository\n' "$skill_name" >&2
+      exit 1
+    fi
+    printf '[KEEP] %s (content-equivalent directory)\n' "$installed_path"
   elif [ -e "$installed_path" ]; then
     printf '[FAIL] %s already exists and is not a symlink\n' "$installed_path" >&2
     exit 1

@@ -1,3 +1,4 @@
 interface:
   display_name: "Frontend UI Review"
   short_description: "JSP, Vue, React, CSS 구현과 UI 품질 점검"
+  default_prompt: "$frontend-ui-review를 사용해 화면의 상태 정합성, XSS, 반응형 동작과 브라우저 품질을 점검해줘."

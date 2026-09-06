@@ -13,6 +13,8 @@
 
 강화 조건이 여러 개면 하나의 확장 trace에 해당 섹션을 모두 작성한다. 적용되지 않는 확장 섹션은 `NOT_APPLICABLE`로 표시하며 삭제하지 않는다. 단순 작업은 trace를 만들지 않는다.
 
+읽기 전용 리뷰에는 상위 [AGENTS.md](../../AGENTS.md)의 산출물 기록 예외를 적용한다. 파일 기록 승인이 없으면 응답에 성공 조건, 검증 결과와 한계를 남기며 로컬 trace는 생성하지 않는다. 응답만 있는 리뷰는 report의 source trace 집계에 포함하지 않는다.
+
 ## Meta-Harness·Harness-Diagnostics 호환 계약
 
 Trace는 사람이 읽는 Markdown 문서이면서 Meta-Harness와 Harness-Diagnostics가 검사할 구조화된 입력이다. 두 목적을 섞지 않도록 다음 경계를 지킨다.

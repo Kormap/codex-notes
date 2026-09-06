@@ -280,7 +280,20 @@ new_fixture windows-directory-install
 rm -rf "$fixture_home/.agents/skills/data-migration" || exit 1
 cp -R "$fixture_repo/skills/data-migration" "$fixture_home/.agents/skills/data-migration" || exit 1
 run_expect_pass_windows_mode 'Windows content-equivalent skill directory is accepted'
+if ! MSYSTEM=MINGW64 HOME=$fixture_home sh "$fixture_repo/scripts/setup.sh" > "$fixture_root/setup-output.txt" 2>&1; then
+  sed -n '1,120p' "$fixture_root/setup-output.txt" >&2
+  fail_test 'Windows setup must preserve a content-equivalent directory'
+fi
+pass_test 'Windows setup accepts existing content-equivalent directories'
 printf '\nWindows drift fixture\n' >> "$fixture_home/.agents/skills/data-migration/SKILL.md" || exit 1
+if MSYSTEM=MINGW64 HOME=$fixture_home sh "$fixture_repo/scripts/setup.sh" > "$fixture_root/setup-output.txt" 2>&1; then
+  fail_test 'Windows setup must reject copied skill drift'
+fi
+grep -Fq 'official user skill directory differs from repository' "$fixture_root/setup-output.txt" || \
+  fail_test 'Windows setup must explain copied skill drift'
+grep -Fq 'Windows drift fixture' "$fixture_home/.agents/skills/data-migration/SKILL.md" || \
+  fail_test 'Windows setup must preserve the differing file'
+pass_test 'Windows setup rejects drift without overwriting files'
 run_expect_fail_windows_mode 'Windows copied skill drift is diagnosed' \
   'data-migration: official user skill directory differs from repository'
 
