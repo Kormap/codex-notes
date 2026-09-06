@@ -1,6 +1,6 @@
 ---
 name: spring-transaction-audit
-description: Java/Spring 서비스에서 `@Transactional`, 롤백, 락, 커넥션 점유, 외부 API 호출, 데이터 정합성 장애를 점검할 때 사용한다.
+description: Java/Spring의 `@Transactional`, rollback, lock, connection 점유, 외부 호출과 데이터 정합성을 점검할 때 사용한다.
 ---
 
 # Spring 트랜잭션 점검

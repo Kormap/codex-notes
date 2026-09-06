@@ -55,6 +55,26 @@ for skill_md in "$repo_root"/skills/*/SKILL.md; do
 
 done
 
+installed_harness=$user_skills_dir/dev-harness
+if [ -d "$installed_harness" ] && [ ! -L "$installed_harness" ]; then
+  root_record=$HOME/.agents/codex-notes-root
+  if [ -e "$root_record" ] || [ -L "$root_record" ]; then
+    if [ ! -f "$root_record" ] || [ -L "$root_record" ]; then
+      printf '%s\n' '[FAIL] codex-notes-root must be a regular file; existing entry was preserved' >&2
+      exit 1
+    fi
+    IFS= read -r recorded_root < "$root_record" || recorded_root=
+    recorded_target=$(resolve_directory "$recorded_root" || true)
+    if [ "$recorded_target" != "$repo_root" ]; then
+      printf '%s\n' '[FAIL] codex-notes-root points to another or missing repository; existing entry was preserved' >&2
+      exit 1
+    fi
+  else
+    printf '%s\n' "$repo_root" > "$root_record"
+  fi
+  printf '%s\n' '[KEEP] central Harness location for copied skill installation'
+fi
+
 printf '%s\n' '[Setup] Git hooks'
 git -C "$repo_root" config --local core.hooksPath .githooks
 printf '[SET] core.hooksPath=%s\n' "$(git -C "$repo_root" config --local --get core.hooksPath)"

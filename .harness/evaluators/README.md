@@ -11,6 +11,7 @@
 | [query-performance.md](query-performance.md) | [`query-performance`](../tasks/query-performance.md) | 기준·변경 실행계획, 정합성, 비용 변화, 운영 영향 |
 | [frontend-change.md](frontend-change.md) | [`frontend-change`](../tasks/frontend-change.md) | lint/type/test, 상태별 UI, desktop/mobile, console/network |
 | [harness-contract.md](harness-contract.md) | [`harness-contract`](../tasks/harness-contract.md) | 결함 재현, 계약 정합성, 회귀 fixture와 전체 Diagnostics |
+| [context-refactor.md](context-refactor.md) | [`context-refactor`](../tasks/context-refactor.md) | discovery 조건별 비용, 필수 규칙의 발견 경로, 설치 회귀와 승격 근거 |
 
 대표 task에 맞지 않으면 [evaluator-template.md](templates/evaluator-template.md)로 작업별 evaluator를 정의한다. 여러 기술 영역을 변경하면 주 task의 evaluator에 필요한 evaluator를 추가하며, 각각의 필수 검사가 모두 판정되어야 한다.
 
@@ -69,6 +70,7 @@ evaluator를 추가하거나 이름을 바꾸면 연결 task와 아래 디렉터
 ├── query-performance.md
 ├── frontend-change.md
 ├── harness-contract.md
+├── context-refactor.md
 └── templates/
     └── evaluator-template.md
 ```

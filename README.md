@@ -78,6 +78,7 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 │   ├── post-rewrite
 │   └── pre-push
 ├── AGENTS.md                # Dev OS for Codex 본체
+├── AGENTS.override.md       # 저장소 전용 계약; 전역 원본 이중 주입 방지
 ├── .harness/               # 작업 실행·검증·개선을 위한 공통 Harness
 │   ├── README.md
 │   ├── baseline/           # Harness 대상 작업의 공통 기준
@@ -96,6 +97,8 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 │   ├── test-doctor-harness.sh # doctor Harness-Diagnostics 회귀 테스트
 │   └── setup.sh              # Skill symlink·Git hook 최초 설정
 └── skills/                  # Codex 개인 Skill
+    ├── dev-harness/          # 조건별 Harness 계약을 읽는 runtime router
+    ├── engineering-standards/ # 조건별 Java·인프라·batch·legacy 운영 기준
     ├── pr-review/
     ├── spring-transaction-audit/
     ├── query-plan-review/
@@ -133,7 +136,9 @@ Java/Spring과 서버 로직은 `[BACKEND · STANDARD]`, Vue.js/React/JSP 화면
 
 ## Harness
 
-`AGENTS.md`는 모든 Codex 작업에 적용한다. Harness baseline은 `AGENTS.md`만으로 재현성, 검증 증거, 또는 협업 통제가 충분하지 않은 작업에 추가 적용한다. 모든 Harness 작업은 Meta-Harness 평가를 위한 최소 trace를 남기고, 고위험·반복 품질 평가·멀티에이전트 작업은 조건에 맞게 trace와 역할·정책을 확장한다. 상세 계약은 [`.harness/README.md`](.harness/README.md), 공통 기준과 고정 용어는 [`.harness/baseline/`](.harness/baseline/README.md), 대표 작업은 [`.harness/tasks/`](.harness/tasks/README.md), 판정 기준은 [`.harness/evaluators/`](.harness/evaluators/README.md), 승인·병렬 작업 통제는 [`.harness/policies/`](.harness/policies/README.md), 실행 역할 계약은 [`.harness/roles/`](.harness/roles/README.md), trace 템플릿과 보관 규칙은 [`.harness/traces/`](.harness/traces/README.md), trace 집계와 candidate 판단 계약은 [`.harness/reports/`](.harness/reports/README.md), 개선안 평가와 승격 경계는 [`.harness/candidates/`](.harness/candidates/README.md)에서 관리한다.
+`AGENTS.md`는 공통 행동을 정하고, [`dev-harness`](skills/dev-harness/SKILL.md)는 비단순 구현·리팩터링·설정·버그 수정·검증 중심 리뷰의 필요한 계약을 선택한다. 고위험·반복 품질 평가·멀티에이전트는 변경 크기와 무관하게 적용하며, 그 외 단순 작업은 제외한다. 복합 작업은 주 task와 추가 영역의 필수 evaluator를 함께 적용한다.
+
+상세 색인은 [`.harness/README.md`](.harness/README.md), 공통 기준은 [baseline](.harness/baseline/README.md), 대표 작업은 [tasks](.harness/tasks/README.md), 판정 기준은 [evaluators](.harness/evaluators/README.md), 조건부 승인·병렬 통제는 [policies](.harness/policies/README.md), 역할 계약은 [roles](.harness/roles/README.md)에서 관리한다. Trace 작성 전에는 [실행 계약](.harness/traces/runtime.md)을 읽고, schema·보관·공유는 [traces](.harness/traces/README.md), 집계는 [reports](.harness/reports/README.md), 후보 생성·평가·승격은 [candidates](.harness/candidates/README.md)를 적용한다. Harness 자체 변경 전에는 [유지보수 계약](.harness/maintenance.md)을 읽는다.
 
 Harness-Diagnostics의 현재 실행 진입점은 [`scripts/doctor.sh`](scripts/doctor.sh)다. 필수 Harness 문서와 README 색인, task-evaluator 연결, trace template·로컬 run·report·candidate의 schema, enum과 참조·집계 정합성을 검사한다. 개별 작업의 성공 여부는 evaluator가 판정하며, 여러 trace의 집계와 개선안 판단은 Meta-Harness가 담당한다.
 
@@ -143,6 +148,8 @@ Harness-Diagnostics의 현재 실행 진입점은 [`scripts/doctor.sh`](scripts/
 
 | Skill | 용도 |
 |---|---|
+| [`dev-harness`](skills/dev-harness/README.md) | 비단순 개발 작업에서 task, evaluator, trace와 조건부 정책을 선택적으로 로딩 |
+| [`engineering-standards`](skills/engineering-standards/README.md) | Java/Spring·인프라·batch·legacy 구현·설계·리뷰와 성능·장애 분석의 조건부 운영 기준 |
 | [`pr-review`](skills/pr-review/README.md) | PR 변경점의 버그, 성능, 테스트 누락, 운영 리스크 리뷰 |
 | [`spring-transaction-audit`](skills/spring-transaction-audit/README.md) | Spring 트랜잭션, 락, 커넥션 점유, 동시성 점검 |
 | [`query-plan-review`](skills/query-plan-review/README.md) | SQL 실행계획, 인덱스, 조인, 페이징 병목 분석 |
@@ -155,7 +162,7 @@ Harness-Diagnostics의 현재 실행 진입점은 [`scripts/doctor.sh`](scripts/
 | [`frontend-ui-review`](skills/frontend-ui-review/README.md) | JSP/JSTL, Vue, React, CSS 구현·리뷰 시 상태 정합성, XSS, 반응형 UI, 브라우저 동작과 시각 회귀 점검 |
 | [`skill-list`](skills/skill-list/README.md) | `/스킬` 요청 시 사용 가능한 Codex skill 목록과 로컬 설정 확인 |
 
-각 링크는 상세 설명으로 연결된다. Codex가 실제 실행할 지침의 원본은 각 디렉터리의 `SKILL.md`다.
+각 링크는 상세 설명으로 연결된다. Codex가 실제 실행할 지침의 원본은 각 디렉터리의 `SKILL.md`다. 초기 context에는 skill의 이름·description·경로만 노출되고, 본문과 reference는 선택된 skill에 필요한 범위에서 읽는다.
 
 ---
 
@@ -163,40 +170,32 @@ Harness-Diagnostics의 현재 실행 진입점은 [`scripts/doctor.sh`](scripts/
 
 ### 글로벌 설정
 
-`codex-notes` 저장소를 원본으로 두고, Codex가 읽는 위치에는 symlink를 둔다.
-이렇게 하면 `~/AGENTS.md` 또는 `~/.codex/AGENTS.md`를 수정해도 실제로는 저장소의 `AGENTS.md`가 수정되어 Git 변경사항으로 추적된다.
+`codex-notes` 저장소의 `AGENTS.md`를 원본으로 두고, Codex의 전역 지침 진입점에 symlink를 둔다.
+전역 진입점은 `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`다. `CODEX_HOME`을 설정하지 않으면 기본값은 `~/.codex`다.
 
 ```text
-~/AGENTS.md -> /path/to/codex-notes/AGENTS.md
-~/.codex/AGENTS.md -> /path/to/codex-notes/AGENTS.md
+${CODEX_HOME:-$HOME/.codex}/AGENTS.md -> /path/to/codex-notes/AGENTS.md
 ```
 
-기존 파일을 저장소 원본으로 교체하려면 아래처럼 실행한다.
-
-```bash
-ln -sf /path/to/codex-notes/AGENTS.md "$HOME/AGENTS.md"
-ln -sf /path/to/codex-notes/AGENTS.md "$HOME/.codex/AGENTS.md"
-```
-
-다른 PC에서는 저장소를 먼저 clone한 뒤 같은 방식으로 연결한다.
+새 PC에서는 저장소를 clone한 뒤 전역 진입점을 연결한다. 기존 `AGENTS.md`가 있으면 내용을 먼저 확인하고 백업하거나 통합한 뒤 연결한다.
 
 ```bash
 git clone https://github.com/Kormap/codex-notes.git /path/to/codex-notes
-mkdir -p "$HOME/.codex"
-ln -sf /path/to/codex-notes/AGENTS.md "$HOME/AGENTS.md"
-ln -sf /path/to/codex-notes/AGENTS.md "$HOME/.codex/AGENTS.md"
+codex_home=${CODEX_HOME:-"$HOME/.codex"}
+mkdir -p "$codex_home"
+ln -s /path/to/codex-notes/AGENTS.md "$codex_home/AGENTS.md"
+/path/to/codex-notes/scripts/setup.sh
 ```
 
-### 프로젝트별 적용
+`~/AGENTS.md`는 Codex의 표준 전역 discovery 경로가 아니다. 다른 도구가 요구하는 호환 링크로 확인된 경우에만 별도로 유지하며, Codex 설정을 위해 새로 만들지 않는다.
 
-공통 규칙을 그대로 적용할 프로젝트 디렉터리에서 실행한다.
+### 프로젝트별 지침
 
-```bash
-ln -sfn /path/to/codex-notes/AGENTS.md ./AGENTS.md
-```
+전역 `AGENTS.md`는 모든 프로젝트에 이미 적용되므로 같은 파일을 프로젝트 루트에 다시 symlink하지 않는다. 동일한 원본을 전역과 프로젝트 scope에서 모두 발견하면 지침이 중복 주입된다.
 
-이미 `AGENTS.md`가 일반 파일이거나 디렉터리라면 먼저 내용을 확인한 뒤 교체한다.
-프로젝트별 규칙이 필요하면 symlink 대신 해당 프로젝트의 `AGENTS.md`를 사용한다. 더 구체적인 프로젝트 지침과 확립된 관례는 이 문서의 공통 기본값보다 우선하며, 프로젝트 파일에는 빌드·테스트 명령, 도메인 규칙, 배포 제한처럼 프로젝트 고유 정책만 둔다.
+이 저장소는 전역 원본을 버전 관리하므로 프로젝트 진입점으로 [AGENTS.override.md](AGENTS.override.md)를 둔다. 전역 원본이 이미 주입됐으면 재독하지 않고 저장소 전용 계약만 추가한다. 전역 설정이 없는 clone에서는 override가 원본을 한 번 읽도록 안내한다. 새 세션에서 적용되며 기존 대화의 이미 주입된 내용은 제거되지 않는다.
+
+프로젝트별 규칙이 실제로 필요할 때만 해당 프로젝트에 별도의 `AGENTS.md`를 둔다. 더 구체적인 프로젝트 지침과 확립된 관례는 공통 기본값보다 우선하며, 프로젝트 파일에는 빌드·테스트 명령, 도메인 규칙, 배포 제한처럼 프로젝트 고유 정책만 둔다. 하위 디렉터리에 더 좁은 규칙이 필요한 경우에만 그 위치에 local instruction을 추가한다.
 
 예시:
 
@@ -211,6 +210,8 @@ Codex가 개인 Skill을 자동 발견하려면 홈 디렉터리의 Codex Skill 
 공식 사용자 경로인 `~/.agents/skills`에 저장소 Skill 디렉터리의 symlink를 두면, skill 수정사항을 복사 없이 즉시 반영할 수 있다.
 복사본을 여러 위치에 두면 저장소 버전과 실제 Codex 사용 버전이 어긋날 수 있으므로 symlink를 기본 방식으로 사용한다.
 Windows Git Bash가 권한과 설정에 따라 symlink를 일반 디렉터리로 생성한 경우 doctor는 저장소와 전체 내용이 일치할 때만 이를 허용하며, 한 파일이라도 다르면 실패한다.
+
+`dev-harness`가 일반 디렉터리이면 setup은 중앙 저장소의 절대 POSIX 경로를 `~/.agents/codex-notes-root`에 기록한다. resolver는 symlink의 실제 원본 위치를 우선하고 복사 설치에서만 이 기록을 읽는다. 기존 기록이 다른 저장소를 가리키면 덮어쓰지 않고 실패한다. 저장소를 이동한 경우 기록을 확인·수정한 뒤 setup을 다시 실행한다. 이 로컬 설치 기록은 Git이나 trace에 포함하지 않는다.
 
 저장소를 clone한 직후에는 다음 명령을 한 번 실행한다. 반복 실행해도 이미 올바른 symlink와 hook 설정은 유지된다.
 
@@ -262,6 +263,7 @@ Harness 검사는 다음 범위를 포함한다.
 - 존재하는 로컬 trace의 ID, 한국시간 `+09:00`, enum, placeholder와 최종 판정 정합성
 - report 템플릿의 필수 필드·표 구조, source inventory·집계 수치와 원본 trace 참조 정합성
 - candidate 템플릿의 필수 필드·표 구조, 구현 스크립트와 실제 candidate의 source report·task·evaluator 참조 및 상태·판정 정합성
+- 설치된 `dev-harness` resolver가 현재 중앙 저장소를 실제로 찾는지 확인
 
 `doctor.sh`의 Harness 진단 회귀는 Git으로 관리하는 다음 스크립트로 검증한다. 테스트는 임시 저장소 복사본에 정상·오류 fixture를 구성하며 실제 작업 파일을 변경하지 않는다.
 
@@ -306,3 +308,4 @@ Notion/GitHub 연동은 Codex 앱의 커넥터와 로컬 자동화를 통해 수
 ## 다음 문서
 
 - 장기 개선 항목은 `ROADMAP.md`에서 관리한다.
+- Context·지침 수정본의 독립 검토에는 [재검토 프롬프트](docs/context-review-prompt.md)를 사용한다.

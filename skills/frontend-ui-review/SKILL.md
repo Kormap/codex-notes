@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-review
-description: JSP/JSTL, Vue, React, CSS 화면을 구현하거나 리뷰할 때 컴포넌트 책임, 상태 정합성, XSS, 반응형 UI, 브라우저 동작과 시각 회귀를 점검한다.
+description: JSP/JSTL, Vue, React, CSS 화면 구현·리뷰에서 상태 정합성, XSS, 반응형 UI와 브라우저 동작을 점검할 때 사용한다.
 ---
 
 # 프런트엔드 UI 구현 및 리뷰

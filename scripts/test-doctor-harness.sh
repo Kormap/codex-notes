@@ -276,6 +276,72 @@ run_expect_fail_windows_mode() {
 new_fixture valid
 run_expect_pass 'valid repository fixture'
 
+new_fixture 'windows-first-copy with spaces'
+copied_harness=$fixture_home/.agents/skills/dev-harness
+rm "$copied_harness" || exit 1
+# Model Git Bash creating a directory copy on the first ln -s invocation.
+if ! MSYSTEM=MINGW64 HOME=$fixture_home sh -c '
+  ln() { cp -R "$2" "$3"; }
+  . "$0"
+' "$fixture_repo/scripts/setup.sh" > "$fixture_root/setup-output" 2>&1; then
+  cat "$fixture_root/setup-output" >&2
+  fail_test 'first copied Harness installation must succeed without a second setup run'
+fi
+[ -d "$copied_harness" ] && [ ! -L "$copied_harness" ] || \
+  fail_test 'first-install fixture did not create a directory copy'
+expected_harness=$(CDPATH= cd -- "$fixture_repo" && pwd -P) || exit 1
+[ "$(cat "$fixture_home/.agents/codex-notes-root")" = "$expected_harness" ] || \
+  fail_test 'first copied Harness installation did not record the central repository'
+mkdir -p "$fixture_root/other-project" || exit 1
+resolved_harness=$(cd "$fixture_root/other-project" && HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh") || exit 1
+[ "$resolved_harness" = "$expected_harness" ] || fail_test 'first copied Harness installation resolved a different project'
+pass_test 'first copied Harness installation records and resolves the central repository'
+
+new_fixture 'windows-harness-copy with spaces'
+copied_harness=$fixture_home/.agents/skills/dev-harness
+rm "$copied_harness" || exit 1
+cp -R "$fixture_repo/skills/dev-harness" "$copied_harness" || exit 1
+if HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh" > "$fixture_root/resolve-output" 2>&1; then
+  fail_test 'copied Harness without a root record must fail'
+fi
+grep -Fq 'central Harness location is missing' "$fixture_root/resolve-output" || \
+  fail_test 'copied Harness must explain the missing root record'
+run_expect_fail_windows_mode 'copied Harness cannot silently use the current project' \
+  'dev-harness: installed central Harness cannot be resolved'
+
+if ! MSYSTEM=MINGW64 HOME=$fixture_home sh "$fixture_repo/scripts/setup.sh" > "$fixture_root/setup-output" 2>&1; then
+  cat "$fixture_root/setup-output" >&2
+  fail_test 'setup must configure the copied Harness location'
+fi
+mkdir -p "$fixture_root/other-project" || exit 1
+resolved_harness=$(cd "$fixture_root/other-project" && HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh") || exit 1
+expected_harness=$(CDPATH= cd -- "$fixture_repo" && pwd -P) || exit 1
+[ "$resolved_harness" = "$expected_harness" ] || fail_test 'copied Harness resolved a different project'
+[ -f "$resolved_harness/.harness/baseline/README.md" ] || fail_test 'resolved baseline is missing'
+[ -f "$resolved_harness/.harness/traces/runtime.md" ] || fail_test 'resolved trace execution contract is missing'
+run_expect_pass_windows_mode 'copied Harness resolves central contracts from another project with spaces in its path'
+
+printf '%s\n' "$fixture_root/other-project" > "$fixture_home/.agents/codex-notes-root"
+if HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh" > "$fixture_root/resolve-output" 2>&1; then
+  fail_test 'non-Harness repository must not resolve'
+fi
+if MSYSTEM=MINGW64 HOME=$fixture_home sh "$fixture_repo/scripts/setup.sh" > "$fixture_root/setup-output" 2>&1; then
+  fail_test 'setup must not overwrite a conflicting root record'
+fi
+[ "$(cat "$fixture_home/.agents/codex-notes-root")" = "$fixture_root/other-project" ] || \
+  fail_test 'setup overwrote the conflicting root record'
+printf '%s\n' 'relative/path' > "$fixture_home/.agents/codex-notes-root"
+if HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh" > "$fixture_root/resolve-output" 2>&1; then
+  fail_test 'relative central Harness location must fail'
+fi
+grep -Fq 'absolute POSIX path' "$fixture_root/resolve-output" || fail_test 'relative root rejection was not explicit'
+printf '%s\n' "$fixture_root/missing-repository" > "$fixture_home/.agents/codex-notes-root"
+if HOME=$fixture_home sh "$copied_harness/scripts/resolve-root.sh" > "$fixture_root/resolve-output" 2>&1; then
+  fail_test 'missing central Harness repository must fail'
+fi
+grep -Fq 'location is unavailable' "$fixture_root/resolve-output" || fail_test 'missing repository rejection was not explicit'
+pass_test 'copied Harness rejects invalid roots and setup preserves conflicting records'
+
 new_fixture windows-directory-install
 rm -rf "$fixture_home/.agents/skills/data-migration" || exit 1
 cp -R "$fixture_repo/skills/data-migration" "$fixture_home/.agents/skills/data-migration" || exit 1
@@ -300,6 +366,17 @@ run_expect_fail_windows_mode 'Windows copied skill drift is diagnosed' \
 new_fixture pruned-traces
 mv "$fixture_repo/.harness/traces/runs" "$fixture_repo/.harness/traces/pruned-runs" || exit 1
 mkdir -p "$fixture_repo/.harness/traces/runs" || exit 1
+mkdir -p "$fixture_repo/.harness/candidates/pruned-candidates" || exit 1
+for fixture_candidate in "$fixture_repo"/.harness/candidates/*.md; do
+  [ "$(basename -- "$fixture_candidate")" = 'README.md' ] && continue
+  if ! grep -Fq -- '- `candidate_status`: `PROMOTED`' "$fixture_candidate"; then
+    fixture_candidate_name=$(basename -- "$fixture_candidate")
+    awk -v target="$fixture_candidate_name" 'index($0, "](" target ")") == 0 { print }' \
+      "$fixture_repo/.harness/candidates/README.md" > "$fixture_root/candidates-readme.md" || exit 1
+    mv "$fixture_root/candidates-readme.md" "$fixture_repo/.harness/candidates/README.md" || exit 1
+    mv "$fixture_candidate" "$fixture_repo/.harness/candidates/pruned-candidates/" || exit 1
+  fi
+done
 run_expect_pass 'durable reports and promoted candidates survive trace retention cleanup'
 
 awk '
@@ -343,7 +420,7 @@ run_expect_fail 'required Harness file is diagnosed' '.harness/roles/verifier.md
 
 new_fixture baseline-history-errors
 sed \
-  -e 's/- Version: `0.3.0-reference-lifecycle`/- Version: `9.9.9-unknown`/' \
+  -e 's/^- Version: `[^`]*`/- Version: `9.9.9-unknown`/' \
   -e 's/| `0.2.0-report-source-integrity` | 2026-09-03 | 이전 |/| `0.2.0-report-source-integrity` | 2026-09-03 | 활성 |/' \
   "$fixture_repo/.harness/baseline/version.md" > "$fixture_root/version.md" || exit 1
 mv "$fixture_root/version.md" "$fixture_repo/.harness/baseline/version.md" || exit 1

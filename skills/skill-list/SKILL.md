@@ -1,6 +1,6 @@
 ---
 name: skill-list
-description: /스킬, 스킬 목록, skill list, 현재 사용 가능한 Codex skill 확인, 공식 사용자 경로·저장소 개인 skill·시스템 skill 기준 목록의 차이 점검이 필요할 때 사용한다.
+description: /스킬, 스킬 목록 또는 skill list 요청에서 현재 세션·사용자·저장소·시스템 skill 차이를 확인할 때 사용한다.
 ---
 
 # 스킬 목록 확인

@@ -1,6 +1,6 @@
 ---
 name: deploy-checklist
-description: Java/Spring 배포 체크리스트, DB 마이그레이션, 설정 누락, feature flag, graceful shutdown, 롤백, 헬스체크, 롤아웃 모니터링 점검이 필요할 때 사용한다.
+description: Java/Spring 배포의 DB migration, config·flag, graceful shutdown, rollback, health check와 rollout을 점검할 때 사용한다.
 ---
 
 # 배포 체크리스트

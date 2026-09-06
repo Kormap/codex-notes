@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: GitHub PR, git diff, 변경 파일에서 버그, 회귀, 테스트 누락, 트랜잭션/동시성, DB 비용, 배포 리스크를 리뷰할 때 사용한다.
+description: GitHub PR이나 git diff를 읽기 전용으로 검토해 버그, 회귀, 테스트 누락과 운영 리스크를 찾을 때 사용한다.
 ---
 
 # PR 리뷰

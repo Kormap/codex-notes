@@ -1,6 +1,6 @@
 ---
 name: mybatis-xml-review
-description: MyBatis XML, mapper interface, DTO 매핑에서 동적 SQL, resultMap, count 쿼리, 페이징, SQL 성능 문제를 점검할 때 사용한다.
+description: MyBatis XML·mapper·DTO의 동적 SQL, resultMap, count, paging과 SQL 성능을 점검할 때 사용한다.
 ---
 
 # MyBatis XML 리뷰

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Standards"
+  short_description: "변경 영역에 맞는 구현·설계·장애 분석의 운영 기준을 확인합니다."
+  default_prompt: "$engineering-standards로 이 변경에 적용할 운영 기준을 확인해줘."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Development Harness"
+  short_description: "개발 작업의 task, evaluator와 trace를 선택합니다."
+  default_prompt: "$dev-harness를 사용해 이 변경의 성공 조건, 검증과 trace 수준을 정해줘."

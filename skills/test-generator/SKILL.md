@@ -1,6 +1,6 @@
 ---
 name: test-generator
-description: JUnit, Mockito, Spring MVC, 통합 테스트로 회귀, 경계값, 동시성, 실패 경로 테스트를 추가하거나 보강할 때 사용한다.
+description: JUnit·Mockito·Spring 통합 테스트로 회귀, 경계값, 동시성과 실패 경로를 추가·보강할 때 사용한다.
 ---
 
 # 테스트 생성

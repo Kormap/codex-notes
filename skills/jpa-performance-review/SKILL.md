@@ -1,6 +1,6 @@
 ---
 name: jpa-performance-review
-description: JPA Entity, Repository, JPQL, QueryDSL에서 N+1, fetch 전략, 영속성 컨텍스트 비용, bulk update, OSIV 같은 ORM 성능 이슈를 점검할 때 사용한다.
+description: JPA·JPQL·QueryDSL의 N+1, fetch 전략, 영속성 컨텍스트, bulk update와 OSIV 성능을 점검할 때 사용한다.
 ---
 
 # JPA 성능 리뷰

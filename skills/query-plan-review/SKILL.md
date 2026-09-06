@@ -1,6 +1,6 @@
 ---
 name: query-plan-review
-description: SQL, EXPLAIN, 실행계획, DDL, 인덱스, 조회 지연 이슈에서 조인 비용, 페이징, count 쿼리, 튜닝 포인트를 분석할 때 사용한다.
+description: SQL·EXPLAIN·실행계획과 인덱스의 join, paging, count 비용과 튜닝 지점을 분석할 때 사용한다.
 ---
 
 # 실행계획 리뷰

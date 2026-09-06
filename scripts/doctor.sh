@@ -1070,7 +1070,9 @@ printf '%s\n' '[Harness]'
 harness_errors_before=$error_count
 
 for required_harness_file in \
+  AGENTS.override.md \
   .harness/README.md \
+  .harness/maintenance.md \
   .harness/baseline/README.md \
   .harness/baseline/context-contract.md \
   .harness/baseline/terminology.md \
@@ -1089,6 +1091,7 @@ for required_harness_file in \
   .harness/evaluators/README.md \
   .harness/evaluators/templates/evaluator-template.md \
   .harness/traces/README.md \
+  .harness/traces/runtime.md \
   .harness/traces/templates/minimum-trace.md \
   .harness/traces/templates/extended-trace.md \
   .harness/reports/README.md \
@@ -1144,6 +1147,8 @@ if [ -f "$repo_root/.harness/evaluators/README.md" ]; then
     '.harness/evaluators/templates/evaluator-template.md'
 fi
 if [ -f "$repo_root/.harness/traces/README.md" ]; then
+  require_index_link "$repo_root/.harness/traces/README.md" 'runtime.md' \
+    '.harness/traces/runtime.md'
   require_index_link "$repo_root/.harness/traces/README.md" 'templates/minimum-trace.md' \
     '.harness/traces/templates/minimum-trace.md'
   require_index_link "$repo_root/.harness/traces/README.md" 'templates/extended-trace.md' \
@@ -1756,6 +1761,19 @@ else
       fail "$skill_name: official user skill symlink is missing"
     fi
   done < "$repo_skills"
+
+  installed_harness_resolver=$user_skills_dir/dev-harness/scripts/resolve-root.sh
+  if [ ! -f "$installed_harness_resolver" ]; then
+    fail 'dev-harness: installed central Harness resolver is missing'
+  elif resolved_harness_root=$(sh "$installed_harness_resolver"); then
+    if [ "$resolved_harness_root" != "$repo_root" ]; then
+      fail 'dev-harness: installed resolver points to another repository'
+    else
+      pass 'installed dev-harness resolves the central repository'
+    fi
+  else
+    fail 'dev-harness: installed central Harness cannot be resolved'
+  fi
 
   for installed_md in "$user_skills_dir"/*/SKILL.md; do
     [ -f "$installed_md" ] || continue

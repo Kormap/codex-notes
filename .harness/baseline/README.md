@@ -1,45 +1,24 @@
 # Harness Baseline
 
-`AGENTS.md`는 모든 Codex 작업에 적용한다. Harness baseline은 `AGENTS.md`만으로 재현성, 검증 증거, 또는 협업 통제가 충분하지 않은 작업에 추가 적용한다. baseline은 Harness 대상 작업의 최소 계약이다.
-
-baseline과 함께 `task`, `evaluator`, 최소 `trace`를 적용한다. 고위험·반복 품질 평가·멀티에이전트 작업은 trace를 확장하고, 위험 통제나 협업 통제에 필요한 `roles`와 `policies`를 조건에 따라 추가한다. 세부 선택 기준은 [상위 Harness 문서](../README.md#적용-범위)를 따른다.
+이 문서는 모든 Harness 작업에 공통 적용하는 실행·검증 계약의 canonical source다. 적용 여부와 추가 문서는 [`dev-harness`](../../skills/dev-harness/SKILL.md)가 선택한다.
 
 ## 공통 계약
 
-Harness 대상 작업은 다음 흐름을 따른다.
+1. 요청을 목표, 허용 범위와 검증 가능한 성공 조건으로 해석한다.
+2. 데이터, 운영 동작, 외부 비용, 보안 또는 중요한 설계를 바꾸는 불확실성은 실행 전에 확인한다.
+3. 승인된 범위 안에서 가장 작은 완전한 변경만 수행한다.
+4. 선택한 task와 evaluator를 현재 요청에 맞게 구체화하되 기준을 약화하지 않는다.
+5. 가장 좁고 충분한 검증으로 성공 조건을 `PASS`, `FAIL` 또는 `BLOCKED`로 판정한다.
+6. 실제 변경, 검증, 미검증 항목과 남은 위험을 trace와 사용자 보고에 일치시킨다.
 
-1. 요청을 목표, 범위, 성공 조건으로 해석한다.
-2. 결과에 실질적인 영향을 주는 불확실성은 실행 전에 사용자에게 확인한다.
-3. 승인된 범위 안에서 필요한 최소 변경만 수행한다.
-4. 작업 유형과 위험에 맞는 가장 좁고 충분한 검증을 수행한다.
-5. 최소 trace에 작업과 검증 결과를 구조화해 남긴다.
-6. 수행 내용, 변경 파일, 검증 결과, 남은 위험을 근거와 함께 보고한다.
-7. 반복 실패나 검증 누락에서 나온 개선안은 바로 baseline에 넣지 않고 candidate로 분리해 평가한다.
+읽기 전용 작업은 변경·테스트 단계를 만들지 않고 근거와 판단 한계를 보고한다. 사용자가 파일 기록을 요청하거나 승인하지 않으면 trace를 만들지 않는다.
 
-읽기 전용 답변처럼 파일 변경이 없는 작업은 변경·테스트 단계를 억지로 만들지 않는다. 대신 사용한 근거와 판단 한계를 명확히 한다.
-
-## 최소 trace 계약
-
-모든 Harness 작업의 trace는 다음 항목을 포함한다.
-
-- 작업 유형과 적용 task
-- 성공 조건
-- 실행한 evaluator와 PASS/FAIL 결과
-- 변경 범위
-- 재시도·재작업 횟수
-- 검증하지 못한 항목과 남은 위험
-- 적용한 Skill
-
-최소 trace는 Meta-Harness가 반복 실패, 검증 누락, 재작업 원인을 비교할 수 있는 정도로 남긴다. 강화 Harness의 조건별 확장 항목은 [상위 Harness 문서](../README.md#trace-수준)를 따른다.
+Baseline 의미·우선순위·실행 계약을 바꾸기 전에는 [유지보수 계약](../maintenance.md)을 읽는다. 개선 동기와 무관하게 candidate 평가와 승인 없이 현재 기준으로 승격하지 않는다.
 
 ## 문서 구성
 
-- [context-contract.md](context-contract.md): `AGENTS.md`, 프로젝트 지침, Harness 문서의 책임과 적용 순서
-- [terminology.md](terminology.md): 응답 프로필, 실행 역할, Skill의 고정 정의
-- [version.md](version.md): 현재 baseline 버전과 변경 규칙
+- [context-contract.md](context-contract.md): 지침 책임과 적용 순서
+- [terminology.md](terminology.md): 응답 프로필, 실행 역할, Skill과 Trace 정의
+- [version.md](version.md): 현재 baseline 버전, 변경 수준·근거와 적용일·이력 규칙
 
-## 변경 원칙
-
-초기 baseline은 저장소 소유자의 명시적 승인으로 설정한다. 이후 변경은 trace나 report에서 확인된 문제와 검증 결과를 근거로 candidate를 평가한 뒤 반영한다. 상위 지침을 약화하거나 특정 작업의 일회성 예외를 공통 baseline으로 승격하지 않는다.
-
-baseline 문서를 추가하거나 이름을 바꾸면 이 README의 문서 구성 링크도 함께 갱신한다. [`scripts/doctor.sh`](../../scripts/doctor.sh)는 실제 문서와 색인 링크의 일치 여부를 검사한다.
+문서를 추가하거나 이름을 바꾸면 이 색인을 갱신한다. 검사 대상이나 구조 계약이 달라질 때만 [`scripts/doctor.sh`](../../scripts/doctor.sh)와 회귀 fixture도 갱신한다.

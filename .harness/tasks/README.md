@@ -13,6 +13,7 @@
 | [query-performance.md](query-performance.md) | SQL·인덱스·실행계획의 성능 분석 또는 개선 | [`query-performance`](../evaluators/query-performance.md) |
 | [frontend-change.md](frontend-change.md) | Vue·React·JSP/JSTL 화면 또는 브라우저 동작 변경 | [`frontend-change`](../evaluators/frontend-change.md) |
 | [harness-contract.md](harness-contract.md) | Harness 문서·Diagnostics 계약의 재현 가능한 결함 수정 | [`harness-contract`](../evaluators/harness-contract.md) |
+| [context-refactor.md](context-refactor.md) | 지침·조건부 라우팅의 비용과 행동 보존 반복 비교 | [`context-refactor`](../evaluators/context-refactor.md) |
 
 Task의 기본 범위보다 현재 사용자 요청이나 프로젝트 지침이 더 구체적이면 상위 지침을 따른다. Task를 이유로 요청 범위를 확대하거나 사용자가 제외한 작업을 다시 포함하지 않는다.
 
@@ -66,6 +67,7 @@ task를 추가하거나 이름을 바꾸면 연결 evaluator와 아래 디렉터
 ├── query-performance.md
 ├── frontend-change.md
 ├── harness-contract.md
+├── context-refactor.md
 └── templates/
     └── task-template.md
 ```
