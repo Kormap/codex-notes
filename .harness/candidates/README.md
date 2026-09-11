@@ -86,3 +86,4 @@ DRAFT → READY → EVALUATING → ACCEPTED → PROMOTED
 
 새 candidate는 [candidate-template.md](templates/candidate-template.md)를 복사해 작성한다. 실제 candidate 구현은 같은 ID의 `implementations/` 하위 디렉터리에 격리하며, 승인 전에는 baseline 파일에 반영하지 않는다. 첫 승인·승격 기록은 [cd-20260903-report-source-integrity-01.md](cd-20260903-report-source-integrity-01.md)에서 확인한다.
 현재 context 리팩터링의 승인 대기 candidate는 [cd-20260906-context-refactor-01.md](cd-20260906-context-refactor-01.md)에서 확인한다.
+현재 도메인 Skill 라우팅 candidate는 [cd-20260911-domain-skill-routing-01.md](cd-20260911-domain-skill-routing-01.md)에서 확인한다.

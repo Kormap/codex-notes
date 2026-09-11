@@ -93,3 +93,4 @@ Report는 candidate의 근거이지 변경 승인이 아니다. candidate 구현
 
 현재 초기 Harness 구축 trace의 첫 집계는 [rp-20260903-harness-bootstrap-01.md](rp-20260903-harness-bootstrap-01.md)에서 확인한다.
 현재 context 리팩터링 비교 집계는 [rp-20260906-context-refactor-01.md](rp-20260906-context-refactor-01.md)에서 확인한다.
+현재 도메인 Skill 라우팅 공백 집계는 [rp-20260911-domain-skill-routing-01.md](rp-20260911-domain-skill-routing-01.md)에서 확인한다.
