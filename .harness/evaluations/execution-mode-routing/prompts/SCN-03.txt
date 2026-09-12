@@ -1,0 +1,1 @@
+fixtures/review/change.diff를 보안·성능·회귀 관점에서 검토하고 재현 가능한 finding만 통합하라.

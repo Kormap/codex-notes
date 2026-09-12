@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario",
+    "gates",
+    "gate_reasons",
+    "routing_decision",
+    "delegation_allowed",
+    "actual_execution",
+    "fallback_reason",
+    "assignments",
+    "delegations",
+    "adopted_results",
+    "rejected_results",
+    "writer_overlap",
+    "changed_files",
+    "integration_evaluator",
+    "integration_command",
+    "rework_count",
+    "unverified",
+    "remaining_risks",
+    "evidence_summary"
+  ],
+  "properties": {
+    "scenario": { "enum": ["SCN-01", "SCN-02", "SCN-03", "SCN-04", "SCN-05"] },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["g1", "g2", "g3", "g4"],
+      "properties": {
+        "g1": { "enum": ["YES", "NO"] },
+        "g2": { "enum": ["YES", "NO"] },
+        "g3": { "enum": ["YES", "NO"] },
+        "g4": { "enum": ["YES", "NO"] }
+      }
+    },
+    "gate_reasons": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["g1", "g2", "g3", "g4"],
+      "properties": {
+        "g1": { "type": "string", "minLength": 1 },
+        "g2": { "type": "string", "minLength": 1 },
+        "g3": { "type": "string", "minLength": 1 },
+        "g4": { "type": "string", "minLength": 1 }
+      }
+    },
+    "routing_decision": { "enum": ["MAIN", "MULTI"] },
+    "delegation_allowed": { "type": "boolean" },
+    "actual_execution": { "enum": ["MAIN", "MULTI", "MAIN_FALLBACK"] },
+    "fallback_reason": { "enum": ["NONE", "DELEGATION_FORBIDDEN_BY_HIGHER_INSTRUCTION", "DELEGATION_TOOL_UNAVAILABLE", "CONCURRENCY_CAPACITY_UNAVAILABLE"] },
+    "assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role", "scope", "writable_paths"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": { "enum": ["Lead", "Researcher", "Implementer", "Reviewer", "Verifier"] },
+          "scope": { "type": "string", "minLength": 1 },
+          "writable_paths": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "delegations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["to", "result_adopted", "evidence"],
+        "properties": {
+          "to": { "type": "string", "minLength": 1 },
+          "result_adopted": { "enum": ["ADOPTED", "REJECTED", "PARTIAL"] },
+          "evidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "adopted_results": { "type": "array", "items": { "type": "string" } },
+    "rejected_results": { "type": "array", "items": { "type": "string" } },
+    "writer_overlap": { "type": "boolean" },
+    "changed_files": { "type": "array", "items": { "type": "string" } },
+    "integration_evaluator": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "integration_command": { "type": "string", "minLength": 1 },
+    "rework_count": { "type": "integer", "minimum": 0 },
+    "unverified": { "type": "array", "items": { "type": "string" } },
+    "remaining_risks": { "type": "array", "items": { "type": "string" } },
+    "evidence_summary": { "type": "string", "minLength": 1 }
+  }
+}

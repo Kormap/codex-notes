@@ -3,3 +3,4 @@
 *.md text eol=lf
 *.yaml text eol=lf
 *.txt text eol=lf
+.harness/evaluations/execution-mode-routing/workspace/fixtures/review/change.diff whitespace=-blank-at-eol

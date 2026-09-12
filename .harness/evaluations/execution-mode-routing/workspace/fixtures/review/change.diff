@@ -1,0 +1,16 @@
+diff --git a/users.js b/users.js
+index 1111111..2222222 100644
+--- a/users.js
++++ b/users.js
+@@ -1,7 +1,13 @@
+ export async function findUsers(db, email, limit) {
+-  return db.query('SELECT id, email FROM users WHERE email = ?', [email]);
++  const sql = `SELECT id, email, password_hash FROM users WHERE email = '${email}'`;
++  const rows = await db.query(sql);
++  return rows.slice(0, limit);
+ }
+ 
+ export function canViewUsers(actor) {
+-  return actor.roles.includes('support');
++  return actor.roles.includes('support') || actor.roles.includes('contractor');
+ }

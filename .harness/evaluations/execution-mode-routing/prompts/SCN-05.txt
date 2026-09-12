@@ -1,0 +1,1 @@
+fixtures/module-a와 module-b의 독립 결함을 각각 수정하고 각 모듈 테스트 후 통합 검증하라.

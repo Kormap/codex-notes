@@ -34,5 +34,6 @@ Harness는 비단순 개발 작업을 재현 가능한 목표, 검증과 근거�
 | [`roles/`](roles/README.md) | 멀티·서브에이전트에서 실제 배정한 역할 계약 |
 | [`reports/`](reports/README.md) | 진단을 통과한 trace 집계와 품질 신호 |
 | [`candidates/`](candidates/README.md) | 개선안 비교와 baseline 승격 판단 |
+| [`evaluations/`](evaluations/README.md) | candidate 생성 전 통제 입력, 격리 실행과 결과 검증 자산 |
 
 충돌과 적용 순서는 [context contract](baseline/context-contract.md), 고정 용어는 [terminology](baseline/terminology.md), 현재 baseline은 [version](baseline/version.md)을 따른다. Harness-Diagnostics는 [`scripts/doctor.sh`](../scripts/doctor.sh), 회귀 fixture는 [`scripts/test-doctor-harness.sh`](../scripts/test-doctor-harness.sh)에서 관리한다.

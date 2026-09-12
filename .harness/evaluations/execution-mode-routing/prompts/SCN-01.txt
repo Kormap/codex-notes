@@ -1,0 +1,1 @@
+fixtures/research/source-a.md와 source-b.md를 각각 조사해 주장·근거·한계를 정리하고 공통 결론을 작성하라.

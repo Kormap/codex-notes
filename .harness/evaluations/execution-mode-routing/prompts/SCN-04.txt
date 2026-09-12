@@ -1,0 +1,1 @@
+fixtures/shared의 공용 설정과 연결된 migration을 일관되게 변경하고 검증하라.
