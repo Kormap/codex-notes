@@ -251,6 +251,8 @@ Skill을 추가하거나 설명을 바꾼 뒤에는 Codex를 재시작하거나 
 
 저장소 구조, Harness 계약, Skill 메타데이터·링크, 공식 사용자 경로의 symlink 또는 Windows 내용 일치 디렉터리와 bundled skill 기준 목록을 한 번에 점검한다.
 
+`skills/codex-system-skills.txt`는 `~/.codex/skills/.system`의 bundled skill만 비교한다. Plugin Creator처럼 플러그인으로 제공되는 Skill은 이 필수 목록에 포함하지 않으며, 플러그인 설치와 세션에서의 Skill 노출 여부를 별도로 확인한다.
+
 ```bash
 ./scripts/doctor.sh
 ```

@@ -274,7 +274,14 @@ run_expect_fail_windows_mode() {
 }
 
 new_fixture valid
+[ ! -d "$fixture_home/.codex/skills/.system/plugin-creator" ] || \
+  fail_test 'Plugin Creator must not be required as a bundled skill'
 run_expect_pass 'valid repository fixture'
+
+new_fixture missing-bundled-skill
+rmdir "$fixture_home/.codex/skills/.system/imagegen" || exit 1
+run_expect_fail 'missing required bundled skill is still diagnosed' \
+  'bundled skills missing locally: imagegen'
 
 new_fixture 'windows-first-copy with spaces'
 copied_harness=$fixture_home/.agents/skills/dev-harness
